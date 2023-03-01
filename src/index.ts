@@ -14,14 +14,20 @@ const main = async () => {
       password: process.env.REDIS_PASSWORD,
     });
 
-    if (redisClient.status === 'connecting') {
-      console.log('Connected to Redis!');
+    try {
+      await redisClient.ping(() => {
+        console.log('Connected to Redis!');
+      });
+    } catch (err: any) {
+      throw new Error(err.message);
     }
 
-    if (process.env.MONGO_URI) {
+    if (process.env.MONGODB_CONNECTION_STRING) {
       await mongoose
-        .connect(process.env.MONGO_URI)
-        .catch((err) => console.error(err));
+        .connect(process.env.MONGODB_CONNECTION_STRING)
+        .catch((err) => {
+          throw new Error(err.message);
+        });
       console.log('Connected to MongoDB!');
     }
 
@@ -41,12 +47,12 @@ const main = async () => {
         indexBackward(config);
       }, INDEX_INTERVAL);
 
-      // // Index older transactions
-      // if (config.oldestBlock) {
-      //   indexOlderTransactions(config).then(() =>
-      //     console.log(`Finished backindexing ${config.name}`),
-      //   );
-      // }
+      // Index older transactions
+      if (config.oldestBlock) {
+        indexOlderTransactions(config).then(() =>
+          console.log(`Finished backindexing ${config.name}`),
+        );
+      }
     }
   } catch (err) {
     console.log('Catching an error: ', err);

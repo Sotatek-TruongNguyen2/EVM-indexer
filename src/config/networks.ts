@@ -1,6 +1,5 @@
 import { Distinct, ID } from '../types';
-import { ChainId } from '../common/ChainId';
-import { chainSupportsEIP1559 } from '../common/chainId';
+import { ChainId, chainSupportsEIP1559 } from '../common/chainId';
 
 interface NetworkArgs {
   name: string;

@@ -8,7 +8,7 @@ export type RedisConfig = {
 
 export const redisConfig: RedisConfig = {
   host: process.env.REDIS_HOST || 'localhost',
-  port: Number(process.env.REDIS_PORT) || 6379,
+  port: 6379,
   options: {},
 };
 

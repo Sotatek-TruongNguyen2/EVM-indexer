@@ -13,7 +13,7 @@ export async function callRPCMethod(
   callable: Function,
   logger: Logger,
   chainName = '',
-) {
+): Promise<any> {
   // Try to get txn receipt again and again until it fails
   let retryCnt = 0;
   let maxReties = 3;

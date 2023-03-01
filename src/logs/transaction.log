@@ -1,0 +1,311 @@
+2023-02-28T02:52:57.097Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T02:52:57.099Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T02:52:58.034Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T02:52:58.036Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T02:52:59.161Z [debug] Ethereum Mainnet_indexForward: network latest block: 16723815
+2023-02-28T02:52:59.177Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707025
+2023-02-28T02:52:59.177Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16706675
+2023-02-28T02:52:59.177Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T02:52:59.161Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707025
+2023-02-28T02:52:59.161Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707375
+2023-02-28T02:52:59.913Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T02:52:59.928Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T02:53:00.628Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353 are {"txnHash":"0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353","user":"0x93cDbf77B4415E3e3f0fe8C6CaedF2b65cAC7795","pid":{"type":"BigNumber","hex":"0x39"},"amount":"456660188103623297798","timestamp":1677345803,"block":"16706749"}
+2023-02-28T02:53:00.646Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T02:53:00.664Z [debug] Ethereum Mainnet_indexBackward: processing took 1 seconds
+2023-02-28T02:53:01.506Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132 are {"txnHash":"0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x3c"},"amount":"8805889645","timestamp":1677353183,"block":"16707356"}
+2023-02-28T02:53:01.514Z [debug] Ethereum Mainnet_indexForward: processing took 2 seconds
+2023-02-28T02:53:06.833Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T02:53:06.834Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T02:53:07.747Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T02:53:07.748Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T02:53:09.095Z [debug] Ethereum Mainnet_indexForward: network latest block: 16723816
+2023-02-28T02:53:09.102Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707025
+2023-02-28T02:53:09.095Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707025
+2023-02-28T02:53:09.096Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707375
+2023-02-28T02:53:09.102Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16706675
+2023-02-28T02:53:09.102Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T02:53:09.915Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T02:53:09.917Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T02:53:10.725Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353 are {"txnHash":"0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353","user":"0x93cDbf77B4415E3e3f0fe8C6CaedF2b65cAC7795","pid":{"type":"BigNumber","hex":"0x39"},"amount":"456660188103623297798","timestamp":1677345803,"block":"16706749"}
+2023-02-28T02:53:10.734Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T02:53:10.738Z [debug] Ethereum Mainnet_indexBackward: processing took 1 seconds
+2023-02-28T02:53:12.187Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132 are {"txnHash":"0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x3c"},"amount":"8805889645","timestamp":1677353183,"block":"16707356"}
+2023-02-28T02:53:12.191Z [debug] Ethereum Mainnet_indexForward: processing took 3 seconds
+2023-02-28T02:53:16.783Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T03:01:52.107Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T03:01:52.110Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T03:01:52.458Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T03:01:52.463Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T03:01:53.307Z [debug] Ethereum Mainnet_indexForward: network latest block: 16723860
+2023-02-28T03:01:53.326Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707375
+2023-02-28T03:01:53.310Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707375
+2023-02-28T03:01:53.312Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707725
+2023-02-28T03:01:53.327Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16707025
+2023-02-28T03:01:53.327Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T03:01:53.919Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T03:01:53.931Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T03:01:54.514Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T03:01:54.538Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xee62a7ad69fde44c6fb11501852560a6f69bba33a5d92137758bee53ce7ddcbc are {"txnHash":"0xee62a7ad69fde44c6fb11501852560a6f69bba33a5d92137758bee53ce7ddcbc","user":"0xde7e8fB53E3Eba9D49cB0bFbB9A93AC63Aed07be","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"11872431669187017195","timestamp":1677356759,"block":"16707651"}
+2023-02-28T04:28:37.859Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:28:37.864Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:28:38.164Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:28:38.165Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:28:39.411Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724289
+2023-02-28T04:28:39.425Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707375
+2023-02-28T04:28:39.413Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707375
+2023-02-28T04:28:39.415Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707725
+2023-02-28T04:28:39.426Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16707025
+2023-02-28T04:28:39.426Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:28:40.030Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:28:40.040Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:28:40.621Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xee62a7ad69fde44c6fb11501852560a6f69bba33a5d92137758bee53ce7ddcbc are {"txnHash":"0xee62a7ad69fde44c6fb11501852560a6f69bba33a5d92137758bee53ce7ddcbc","user":"0xde7e8fB53E3Eba9D49cB0bFbB9A93AC63Aed07be","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"11872431669187017195","timestamp":1677356759,"block":"16707651"}
+2023-02-28T04:28:40.642Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T04:28:40.665Z [debug] Ethereum Mainnet_indexForward: processing took 0 seconds
+2023-02-28T04:28:41.266Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132 are {"txnHash":"0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x3c"},"amount":"8805889645","timestamp":1677353183,"block":"16707356"}
+2023-02-28T04:28:41.276Z [debug] Ethereum Mainnet_indexBackward: processing took 1 seconds
+2023-02-28T04:28:47.800Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:28:47.803Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:28:48.106Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:28:48.107Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:28:48.807Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724289
+2023-02-28T04:28:48.816Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707025
+2023-02-28T04:28:48.807Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707025
+2023-02-28T04:28:48.808Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707375
+2023-02-28T04:28:48.817Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16706675
+2023-02-28T04:28:48.817Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:28:50.185Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:28:50.656Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:28:50.763Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353 are {"txnHash":"0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353","user":"0x93cDbf77B4415E3e3f0fe8C6CaedF2b65cAC7795","pid":{"type":"BigNumber","hex":"0x39"},"amount":"456660188103623297798","timestamp":1677345803,"block":"16706749"}
+2023-02-28T04:28:50.775Z [debug] Ethereum Mainnet_indexBackward: processing took 0 seconds
+2023-02-28T04:28:51.267Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T04:28:51.920Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132 are {"txnHash":"0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x3c"},"amount":"8805889645","timestamp":1677353183,"block":"16707356"}
+2023-02-28T04:28:51.929Z [debug] Ethereum Mainnet_indexForward: processing took 1 seconds
+2023-02-28T04:28:57.736Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:28:57.737Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:28:57.974Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:28:57.974Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:28:59.449Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724290
+2023-02-28T04:28:59.457Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707375
+2023-02-28T04:28:59.450Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707375
+2023-02-28T04:28:59.450Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707725
+2023-02-28T04:28:59.457Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16707025
+2023-02-28T04:28:59.458Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:29:00.131Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:29:00.494Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:29:00.802Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xee62a7ad69fde44c6fb11501852560a6f69bba33a5d92137758bee53ce7ddcbc are {"txnHash":"0xee62a7ad69fde44c6fb11501852560a6f69bba33a5d92137758bee53ce7ddcbc","user":"0xde7e8fB53E3Eba9D49cB0bFbB9A93AC63Aed07be","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"11872431669187017195","timestamp":1677356759,"block":"16707651"}
+2023-02-28T04:29:00.813Z [debug] Ethereum Mainnet_indexForward: processing took 0 seconds
+2023-02-28T04:29:01.112Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T04:29:01.702Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132 are {"txnHash":"0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x3c"},"amount":"8805889645","timestamp":1677353183,"block":"16707356"}
+2023-02-28T04:29:01.711Z [debug] Ethereum Mainnet_indexBackward: processing took 1 seconds
+2023-02-28T04:29:07.736Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:29:07.737Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:29:08.067Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:29:08.067Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:29:08.661Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724291
+2023-02-28T04:29:08.668Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707025
+2023-02-28T04:29:08.663Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707025
+2023-02-28T04:29:08.664Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707375
+2023-02-28T04:29:08.669Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16706675
+2023-02-28T04:29:08.669Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:29:09.411Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:29:09.416Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:29:09.988Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353 are {"txnHash":"0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353","user":"0x93cDbf77B4415E3e3f0fe8C6CaedF2b65cAC7795","pid":{"type":"BigNumber","hex":"0x39"},"amount":"456660188103623297798","timestamp":1677345803,"block":"16706749"}
+2023-02-28T04:29:10.003Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T04:29:10.009Z [debug] Ethereum Mainnet_indexBackward: processing took 1 seconds
+2023-02-28T04:29:10.581Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132 are {"txnHash":"0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x3c"},"amount":"8805889645","timestamp":1677353183,"block":"16707356"}
+2023-02-28T04:29:10.589Z [debug] Ethereum Mainnet_indexForward: processing took 1 seconds
+2023-02-28T04:29:17.809Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:29:17.810Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:29:18.048Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:29:18.049Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:29:18.637Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724292
+2023-02-28T04:29:18.641Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707375
+2023-02-28T04:29:18.642Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16707025
+2023-02-28T04:29:18.642Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:29:18.637Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707375
+2023-02-28T04:29:18.637Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707725
+2023-02-28T04:29:19.258Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:29:19.843Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xee62a7ad69fde44c6fb11501852560a6f69bba33a5d92137758bee53ce7ddcbc are {"txnHash":"0xee62a7ad69fde44c6fb11501852560a6f69bba33a5d92137758bee53ce7ddcbc","user":"0xde7e8fB53E3Eba9D49cB0bFbB9A93AC63Aed07be","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"11872431669187017195","timestamp":1677356759,"block":"16707651"}
+2023-02-28T04:29:19.851Z [debug] Ethereum Mainnet_indexForward: processing took 0 seconds
+2023-02-28T04:29:20.912Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:29:21.490Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T04:29:22.079Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132 are {"txnHash":"0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x3c"},"amount":"8805889645","timestamp":1677353183,"block":"16707356"}
+2023-02-28T04:29:22.086Z [debug] Ethereum Mainnet_indexBackward: processing took 2 seconds
+2023-02-28T04:29:27.747Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:29:27.748Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:29:27.983Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:29:27.983Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:29:28.636Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724293
+2023-02-28T04:29:28.640Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707025
+2023-02-28T04:29:28.637Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707025
+2023-02-28T04:29:28.637Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707375
+2023-02-28T04:29:28.640Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16706675
+2023-02-28T04:29:28.640Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:29:29.256Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:29:29.272Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:29:29.855Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T04:29:29.867Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353 are {"txnHash":"0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353","user":"0x93cDbf77B4415E3e3f0fe8C6CaedF2b65cAC7795","pid":{"type":"BigNumber","hex":"0x39"},"amount":"456660188103623297798","timestamp":1677345803,"block":"16706749"}
+2023-02-28T04:29:29.872Z [debug] Ethereum Mainnet_indexBackward: processing took 0 seconds
+2023-02-28T04:29:30.455Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132 are {"txnHash":"0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x3c"},"amount":"8805889645","timestamp":1677353183,"block":"16707356"}
+2023-02-28T04:29:30.462Z [debug] Ethereum Mainnet_indexForward: processing took 1 seconds
+2023-02-28T04:29:37.726Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:29:37.728Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:29:37.972Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:29:37.973Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:29:39.290Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724294
+2023-02-28T04:29:39.296Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707375
+2023-02-28T04:29:39.291Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707375
+2023-02-28T04:29:39.292Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707725
+2023-02-28T04:29:39.297Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16707025
+2023-02-28T04:29:39.297Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:29:39.896Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:29:39.909Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:29:40.463Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xee62a7ad69fde44c6fb11501852560a6f69bba33a5d92137758bee53ce7ddcbc are {"txnHash":"0xee62a7ad69fde44c6fb11501852560a6f69bba33a5d92137758bee53ce7ddcbc","user":"0xde7e8fB53E3Eba9D49cB0bFbB9A93AC63Aed07be","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"11872431669187017195","timestamp":1677356759,"block":"16707651"}
+2023-02-28T04:29:40.469Z [debug] Ethereum Mainnet_indexForward: processing took 1 seconds
+2023-02-28T04:29:40.520Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T04:29:41.080Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132 are {"txnHash":"0x01b2d0a8d14ee889fb8125925e4fc6a639563e21239021f3984d5836b6dcf132","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x3c"},"amount":"8805889645","timestamp":1677353183,"block":"16707356"}
+2023-02-28T04:29:41.088Z [debug] Ethereum Mainnet_indexBackward: processing took 2 seconds
+2023-02-28T04:29:47.735Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:29:47.736Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:29:47.970Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:29:47.971Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:29:48.566Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724294
+2023-02-28T04:29:48.570Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16707025
+2023-02-28T04:29:48.567Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16707025
+2023-02-28T04:29:48.568Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707375
+2023-02-28T04:29:48.570Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16706675
+2023-02-28T04:29:48.571Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:29:49.232Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:29:49.240Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:29:49.810Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4 are {"txnHash":"0x44d0681e8954d4afa83e7292962f20a0e8485d4d045eab46cec2d763e9b2b5c4","user":"0xA2b0E9Cb3cCa100D43Df9e80b345534F9b2b421e","pid":{"type":"BigNumber","hex":"0x27"},"amount":"6188322275845699188","timestamp":1677353147,"block":"16707353"}
+2023-02-28T04:29:49.818Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353 are {"txnHash":"0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353","user":"0x93cDbf77B4415E3e3f0fe8C6CaedF2b65cAC7795","pid":{"type":"BigNumber","hex":"0x39"},"amount":"456660188103623297798","timestamp":1677345803,"block":"16706749"}
+2023-02-28T04:29:57.717Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:29:57.718Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:30:07.716Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:30:07.716Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:30:17.724Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:30:17.725Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:30:19.802Z [warn] Ethereum Mainnet_indexForward: connect ECONNREFUSED 192.168.65.2:27017
+2023-02-28T04:30:19.805Z [warn] Ethereum Mainnet_indexBackward: connect ECONNREFUSED 192.168.65.2:27017
+2023-02-28T04:30:19.805Z [debug] Ethereum Mainnet_indexBackward: processing took 30 seconds
+2023-02-28T04:30:19.803Z [debug] Ethereum Mainnet_indexForward: processing took 30 seconds
+2023-02-28T04:30:27.737Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:30:27.738Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:30:28.039Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:30:28.039Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:30:28.653Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724298
+2023-02-28T04:30:28.656Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16706675
+2023-02-28T04:30:28.653Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16706675
+2023-02-28T04:30:28.653Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16707025
+2023-02-28T04:30:28.656Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16706325
+2023-02-28T04:30:28.656Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:30:29.365Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:30:29.376Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:30:30.002Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353 are {"txnHash":"0xc62d0b5a9870b958af2dcdfbe3c0572ab051983d935e76e87229151b7f1cc353","user":"0x93cDbf77B4415E3e3f0fe8C6CaedF2b65cAC7795","pid":{"type":"BigNumber","hex":"0x39"},"amount":"456660188103623297798","timestamp":1677345803,"block":"16706749"}
+2023-02-28T04:30:30.011Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x78f8cf62ddc1889291d7cd5015271734ca07ed065bf93f24c0f2021c0f832f06 are {"txnHash":"0x78f8cf62ddc1889291d7cd5015271734ca07ed065bf93f24c0f2021c0f832f06","user":"0xb5F991218A88C824bfa2d59cFF9456fe18C910af","pid":{"type":"BigNumber","hex":"0x3e"},"amount":"257024295137575823742","timestamp":1677340991,"block":"16706355"}
+2023-02-28T04:30:37.778Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:30:37.778Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:30:47.825Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:30:47.825Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:30:57.685Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:30:57.686Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:30:59.985Z [warn] Ethereum Mainnet_indexForward: connect ECONNREFUSED 192.168.65.2:27017
+2023-02-28T04:30:59.987Z [debug] Ethereum Mainnet_indexForward: processing took 30 seconds
+2023-02-28T04:30:59.993Z [warn] Ethereum Mainnet_indexBackward: connect ECONNREFUSED 192.168.65.2:27017
+2023-02-28T04:30:59.994Z [debug] Ethereum Mainnet_indexBackward: processing took 30 seconds
+2023-02-28T04:31:07.779Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:31:07.781Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:31:08.088Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:31:08.089Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:31:08.744Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724301
+2023-02-28T04:31:08.751Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16706325
+2023-02-28T04:31:08.745Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16706325
+2023-02-28T04:31:08.746Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16706675
+2023-02-28T04:31:08.752Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16705975
+2023-02-28T04:31:08.752Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:31:09.420Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:31:09.421Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:31:10.147Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x78f8cf62ddc1889291d7cd5015271734ca07ed065bf93f24c0f2021c0f832f06 are {"txnHash":"0x78f8cf62ddc1889291d7cd5015271734ca07ed065bf93f24c0f2021c0f832f06","user":"0xb5F991218A88C824bfa2d59cFF9456fe18C910af","pid":{"type":"BigNumber","hex":"0x3e"},"amount":"257024295137575823742","timestamp":1677340991,"block":"16706355"}
+2023-02-28T04:31:10.161Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x3a44fb24eb73f055ec99d5b7b7a8ddd4bbb105e503d4f15a37305d741a952b35 are {"txnHash":"0x3a44fb24eb73f055ec99d5b7b7a8ddd4bbb105e503d4f15a37305d741a952b35","user":"0xb12DE5feaD8166E460295DE85d2A9f46A85175bB","pid":{"type":"BigNumber","hex":"0x08"},"amount":"40278106365525","timestamp":1677338303,"block":"16706138"}
+2023-02-28T04:31:17.719Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:31:17.720Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:31:27.681Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:31:27.681Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:31:37.784Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:31:37.786Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:31:40.130Z [warn] Ethereum Mainnet_indexForward: connect ECONNREFUSED 192.168.65.2:27017
+2023-02-28T04:31:40.130Z [debug] Ethereum Mainnet_indexForward: processing took 31 seconds
+2023-02-28T04:31:40.143Z [warn] Ethereum Mainnet_indexBackward: connect ECONNREFUSED 192.168.65.2:27017
+2023-02-28T04:31:40.143Z [debug] Ethereum Mainnet_indexBackward: processing took 31 seconds
+2023-02-28T04:31:47.722Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:31:47.723Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:31:48.030Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:31:48.031Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:31:48.629Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724304
+2023-02-28T04:31:48.634Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16705975
+2023-02-28T04:31:48.629Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16705975
+2023-02-28T04:31:48.629Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16706325
+2023-02-28T04:31:48.634Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16705625
+2023-02-28T04:31:48.635Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:31:49.449Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:31:49.451Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:31:50.032Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x3a44fb24eb73f055ec99d5b7b7a8ddd4bbb105e503d4f15a37305d741a952b35 are {"txnHash":"0x3a44fb24eb73f055ec99d5b7b7a8ddd4bbb105e503d4f15a37305d741a952b35","user":"0xb12DE5feaD8166E460295DE85d2A9f46A85175bB","pid":{"type":"BigNumber","hex":"0x08"},"amount":"40278106365525","timestamp":1677338303,"block":"16706138"}
+2023-02-28T04:31:50.043Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xd3dfc029269cb4f96bc7e9d421ba062df136481d7b8a9fcec24bcf16da369ac7 are {"txnHash":"0xd3dfc029269cb4f96bc7e9d421ba062df136481d7b8a9fcec24bcf16da369ac7","user":"0x926Af4053E8CBD3C638381693F16360bA29fBbd2","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"23772378452313197351","timestamp":1677333731,"block":"16705762"}
+2023-02-28T04:31:57.670Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:31:57.671Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:32:07.676Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:32:07.677Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:32:17.730Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:32:17.732Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:32:20.017Z [warn] Ethereum Mainnet_indexForward: connect ECONNREFUSED 192.168.65.2:27017
+2023-02-28T04:32:20.018Z [debug] Ethereum Mainnet_indexForward: processing took 31 seconds
+2023-02-28T04:32:20.025Z [warn] Ethereum Mainnet_indexBackward: connect ECONNREFUSED 192.168.65.2:27017
+2023-02-28T04:32:20.026Z [debug] Ethereum Mainnet_indexBackward: processing took 31 seconds
+2023-02-28T04:32:28.261Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:32:28.263Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:32:28.568Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:32:28.570Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:32:29.899Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724308
+2023-02-28T04:32:29.906Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16705625
+2023-02-28T04:32:29.900Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16705625
+2023-02-28T04:32:29.900Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16705975
+2023-02-28T04:32:29.906Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16705275
+2023-02-28T04:32:29.906Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:32:30.637Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:32:30.647Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:32:31.303Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x315cdbac92703aeaecc592becb474c1c8f6b7630936adf6441cd78424941df46 are {"txnHash":"0x315cdbac92703aeaecc592becb474c1c8f6b7630936adf6441cd78424941df46","user":"0xE41B31A827fe8C02596dF4d4043ad2F646E1E4b6","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"37887127280448412283","timestamp":1677327851,"block":"16705275"}
+2023-02-28T04:32:31.314Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xd3dfc029269cb4f96bc7e9d421ba062df136481d7b8a9fcec24bcf16da369ac7 are {"txnHash":"0xd3dfc029269cb4f96bc7e9d421ba062df136481d7b8a9fcec24bcf16da369ac7","user":"0x926Af4053E8CBD3C638381693F16360bA29fBbd2","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"23772378452313197351","timestamp":1677333731,"block":"16705762"}
+2023-02-28T04:32:37.691Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:32:37.697Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:32:47.748Z [debug] Ethereum Mainnet_indexForward: already in progress, skipping interval call.
+2023-02-28T04:32:47.748Z [debug] Ethereum Mainnet_indexBackward: already in progress, skipping interval call.
+2023-02-28T04:34:39.963Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:34:39.968Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:34:40.274Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:34:40.278Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:34:40.892Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724319
+2023-02-28T04:34:40.903Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16705625
+2023-02-28T04:34:40.895Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16705625
+2023-02-28T04:34:40.896Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16705975
+2023-02-28T04:34:40.904Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16705275
+2023-02-28T04:34:40.905Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:34:41.725Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:34:41.733Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events
+2023-02-28T04:34:42.338Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0x315cdbac92703aeaecc592becb474c1c8f6b7630936adf6441cd78424941df46 are {"txnHash":"0x315cdbac92703aeaecc592becb474c1c8f6b7630936adf6441cd78424941df46","user":"0xE41B31A827fe8C02596dF4d4043ad2F646E1E4b6","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"37887127280448412283","timestamp":1677327851,"block":"16705275"}
+2023-02-28T04:34:42.355Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xd3dfc029269cb4f96bc7e9d421ba062df136481d7b8a9fcec24bcf16da369ac7 are {"txnHash":"0xd3dfc029269cb4f96bc7e9d421ba062df136481d7b8a9fcec24bcf16da369ac7","user":"0x926Af4053E8CBD3C638381693F16360bA29fBbd2","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"23772378452313197351","timestamp":1677333731,"block":"16705762"}
+2023-02-28T04:34:42.378Z [debug] Ethereum Mainnet_indexBackward: processing took 1 seconds
+2023-02-28T04:34:42.987Z [debug] processEvents_Ethereum Mainnet: values to be inserted in db for txn with txnHash 0xa97c33083f22b411f4d191c3bbf240b1e33d13498a8e210f783bd8280509708e are {"txnHash":"0xa97c33083f22b411f4d191c3bbf240b1e33d13498a8e210f783bd8280509708e","user":"0x30A120e59059B69951750E29Da1D750C5a659A21","pid":{"type":"BigNumber","hex":"0x2a"},"amount":"3702890463388063898","timestamp":1677335843,"block":"16705935"}
+2023-02-28T04:34:43.001Z [debug] Ethereum Mainnet_indexForward: processing took 2 seconds
+2023-02-28T04:34:49.852Z [info] Ethereum Mainnet_indexForward: Setting timeout 300
+2023-02-28T04:34:49.853Z [info] Ethereum Mainnet_indexBackward: Setting timeout 300
+2023-02-28T04:34:50.096Z [debug] Ethereum Mainnet_indexForward: start indexing forward
+2023-02-28T04:34:50.098Z [debug] Ethereum Mainnet_indexBackward: start indexing forward
+2023-02-28T04:34:50.713Z [debug] Ethereum Mainnet_indexForward: network latest block: 16724320
+2023-02-28T04:34:50.725Z [debug] Ethereum Mainnet_indexBackward: oldest block indexed: 16705975
+2023-02-28T04:34:50.714Z [debug] Ethereum Mainnet_indexForward: indexed latest block: 16705975
+2023-02-28T04:34:50.716Z [debug] Ethereum Mainnet_indexForward: indexing until block: 16706325
+2023-02-28T04:34:50.726Z [debug] Ethereum Mainnet_indexBackward: indexing until: 16705625
+2023-02-28T04:34:50.727Z [debug] Ethereum Mainnet_indexBackward: desired indexing until: 16705275
+2023-02-28T04:34:52.093Z [debug] processEvents_Ethereum Mainnet: proceeding to process 2 retrieved events
+2023-02-28T04:34:52.102Z [debug] processEvents_Ethereum Mainnet: proceeding to process 1 retrieved events

@@ -8,7 +8,10 @@ export function getIndexerLogger(loggerName: string): Logger {
     return _LOGGER_CACHE[loggerName];
   }
 
-  let transportOptions = [];
+  let transportOptions: (
+    | transports.HttpTransportInstance
+    | transports.ConsoleTransportInstance
+  )[] = [];
   // Datadog logging
   if (process.env.DD_LOGGING_ENABLE) {
     const httpTransportOptions = {
@@ -28,6 +31,17 @@ export function getIndexerLogger(loggerName: string): Logger {
   return (_LOGGER_CACHE[loggerName] = createLogger({
     level: 'debug',
     format: combine(label({ label: loggerName }), timestamp(), myFormat),
-    transports: transportOptions,
+    // transports: transportOptions,
+    transports: [
+      //
+      // - Write all logs with importance level of `error` or less to `error.log`
+      // - Write all logs with importance level of `info` or less to `combined.log`
+      //
+      new transports.Console(),
+      new transports.File({
+        filename: 'src/logs/transaction.log',
+        level: 'debug',
+      }),
+    ],
   }));
 }

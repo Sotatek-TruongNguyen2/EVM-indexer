@@ -4,13 +4,16 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start:dev": "nodemon ./src/index.ts --config nodemon.json --ignore 'node_modules/**/*' --exec ts-node src/index.ts"
+    "build": "tsc",
+    "start:dev": "node dist/index.js",
+    "start:watch": "nodemon src/index.ts --config nodemon.json --legacy-watch"
   },
   "dependencies": {
     "@synapseprotocol/sdk": "^0.94.1",
     "dotenv": "^16.0.3",
     "ethers": "^5.6.2",
     "ioredis": "^5.3.1",
+    "mongoose": "^6.10.0",
     "winston": "^3.8.2"
   },
   "devDependencies": {
