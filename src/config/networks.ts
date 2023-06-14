@@ -56,9 +56,16 @@ namespace Networks {
     chainCurrencyCoingeckoId: 'crypto-com-chain',
   });
 
-  const BSC = new Network({
+  export const BSC = new Network({
     name: 'Binance Smart Chain',
     chainId: ChainId.BSC,
+    chainCurrency: 'BNB',
+    chainCurrencyCoingeckoId: 'binancecoin',
+  });
+
+  export const BSC_TESTNET = new Network({
+    name: 'Binance Smart Chain Testnet',
+    chainId: ChainId.BSC_TESTNET,
     chainCurrency: 'BNB',
     chainCurrencyCoingeckoId: 'binancecoin',
   });

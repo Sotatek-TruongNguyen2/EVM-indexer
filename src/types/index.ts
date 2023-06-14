@@ -1,16 +1,19 @@
 import { ChainId } from '../common/chainId';
 
 type ChainConfig = {
-  id: ChainId;
-  name: string;
   contract: string;
-  rpc: () => string | undefined;
-  startBlock: number;
-  oldestBlock?: number;
+  start_block: number;
+  oldest_block?: number;
+  filters: { [hash: string]: { eventName: string } };
 };
 
 type ChainsConfig = {
-  [chain: ChainId]: ChainConfig;
+  [chain: ChainId]: {
+    id: ChainId;
+    name: string;
+    rpcUrls: () => string[];
+    deployments: [ChainConfig];
+  };
 };
 
 type ID = symbol;

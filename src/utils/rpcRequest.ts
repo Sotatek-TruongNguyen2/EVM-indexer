@@ -1,4 +1,6 @@
-import { Logger } from 'winston';
+import { Logger } from "winston";
+import { getRPCProvider } from "../config/chainConfig";
+import axios from "axios";
 
 /***
  * Wraps any callable with a retry mechanism, primarily used for fault tolerance
@@ -10,28 +12,55 @@ import { Logger } from 'winston';
  * @return {Promise<*>}
  */
 export async function callRPCMethod(
-  callable: Function,
-  logger: Logger,
-  chainName = '',
+  chainId: number,
+  callable: string,
+  params?: any,
 ): Promise<any> {
-  // Try to get txn receipt again and again until it fails
-  let retryCnt = 0;
-  let maxReties = 3;
+  let provider = getRPCProvider(chainId);
   let res = null;
-  while (!res) {
-    try {
-      res = await callable();
-    } catch (err) {
-      console.log('err: ', err);
-      retryCnt += 1;
-      logger.warn(
-        `Call failed for callable ${callable.name} ${chainName} - Retry cnt - ${retryCnt}`,
-      );
-      if (retryCnt > maxReties) {
-        throw err;
-      }
-      await new Promise((r) => setTimeout(r, 1500));
-    }
+  try {
+    res = await (params ? provider[callable](...params) : provider[callable]());
+  } catch (err: any) {
+    console.log(err.message);
+    throw err;
+  }
+  return res;
+}
+
+export async function callRPCRawMethod(
+  chainId: number,
+  method?: string,
+  params?: any[],
+): Promise<any> {
+  let provider = getRPCProvider(chainId);
+  const instance = axios.create({
+    baseURL: provider.connection.url,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    timeout: 10000,
+  });
+  let res = null;
+  try {
+    let response = await instance.post(
+      "/",
+      JSON.stringify({
+        method,
+        params,
+        id: 1,
+        jsonrpc: "2.0",
+      }),
+      {
+        headers: {
+          // Overwrite Axios's automatically set Content-Type
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    res = response.data.result;
+  } catch (err: any) {
+    throw err;
   }
   return res;
 }

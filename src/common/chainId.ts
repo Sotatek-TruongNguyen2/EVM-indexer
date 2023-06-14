@@ -5,6 +5,7 @@ export const ChainId = {
   OPTIMISM: 10,
   CRONOS: 25,
   BSC: 56,
+  BSC_TESTNET: 97,
   POLYGON: 137,
   FANTOM: 250,
   BOBA: 288,

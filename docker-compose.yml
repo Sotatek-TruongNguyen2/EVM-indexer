@@ -1,0 +1,67 @@
+# prettier-ignore
+version: "3.8"
+services:
+  mongodb:
+    container_name: hail-indexer-mongodb
+    image: mongo
+    restart: unless-stopped
+    volumes:
+      - data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+    ports:
+      - 27017:27017
+    env_file:
+      - .env
+    networks:
+      - my-network
+  redis:
+    container_name: hail-indexer-redis
+    image: redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    deploy: 
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    volumes:
+      - redis-cache:/data
+    ports:
+      - 10648:6379
+    env_file:
+      - .env
+    networks:
+      - my-network
+  indexer:
+    container_name: hail-indexer-crawler
+    build: ./Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8000:8080
+    volumes:
+      - logs:/app/src/logs
+    depends_on:
+      - mongodb
+      - redis
+    environment:
+      - MONGODB_CONNECTION_STRING=mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:27017
+    env_file:
+      - .env
+    networks:
+      - my-network
+volumes:
+  data:
+  logs:
+  redis-cache:
+
+networks:
+  my-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+          - subnet: "172.16.0.0/24"
+            gateway: "172.16.0.1"
