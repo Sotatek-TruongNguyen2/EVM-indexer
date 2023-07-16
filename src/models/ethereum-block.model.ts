@@ -1,4 +1,15 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
+
+export interface IEthereumBlock extends Document {
+  finalized: boolean;
+  data: any;
+  timestamp: number;
+  block_hash: string;
+  block_number: number;
+  parent_hash: string;
+  network_name: string;
+  chain_id: number;
+}
 
 const EthereumBlockSchema = new mongoose.Schema({
   finalized: {
@@ -17,6 +28,10 @@ const EthereumBlockSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  timestamp: {
+    type: Number,
+    required: true,
+  },
   parent_hash: {
     type: String,
     required: true,
@@ -31,7 +46,7 @@ const EthereumBlockSchema = new mongoose.Schema({
   },
 });
 
-export const EthereumBlocks = mongoose.model(
+export const EthereumBlocks = mongoose.model<IEthereumBlock>(
   "EthereumBlock",
   EthereumBlockSchema,
 );

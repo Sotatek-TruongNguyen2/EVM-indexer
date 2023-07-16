@@ -42,7 +42,7 @@ services:
      dockerfile: Dockerfile.dev
     restart: unless-stopped
     ports:
-      - 8000:8080
+      - 2009:2009
     volumes:
       - logs:/app/src/logs
       - /Users/sotatek/Learning/evm-txs-indexer/indexer/src:/app/src

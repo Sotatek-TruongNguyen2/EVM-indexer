@@ -14,6 +14,7 @@ export interface IContractDeployment extends Document {
   non_fatal_errors: [string];
   fatal_error: string | null;
   filters: ITriggerFilters;
+  handlers: Map<string, string>;
 }
 
 const ContractDeploymentSchema = new mongoose.Schema({
@@ -37,6 +38,11 @@ const ContractDeploymentSchema = new mongoose.Schema({
   latest_ethereum_block_number: {
     type: Number,
     required: false,
+  },
+  handlers: {
+    type: Map,
+    of: String,
+    required: true,
   },
   // oldest_ethereum_block_number: {
   //   type: Number,

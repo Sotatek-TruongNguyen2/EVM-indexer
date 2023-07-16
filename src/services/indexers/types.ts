@@ -1,3 +1,5 @@
+import { BlockPtr } from "../../types/";
+
 enum BlockStreamState {
   /// Starting or restarting reconciliation.
   ///
@@ -30,6 +32,7 @@ enum BlockStreamState {
 
 enum ReconciliationStep {
   ProcessDescendantBlocks,
+  Revert,
   Retry,
   /// Subgraph pointer now matches chain head pointer.
   /// Reconciliation is complete.
@@ -54,7 +57,7 @@ type NextBlocks<T> = {
 
 type NextBlockReturns<T> = {
   state: NextBlockReturnsState;
-  data?: NextBlocks<T>;
+  data?: NextBlocks<T> | BlockPtr;
 };
 
 type IndexingState<T> = {
@@ -63,6 +66,7 @@ type IndexingState<T> = {
 };
 
 export {
+  NextBlocks,
   BlockWithTriggers,
   NextBlockReturns,
   IndexingState,

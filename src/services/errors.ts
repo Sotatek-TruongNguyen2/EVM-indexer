@@ -4,6 +4,9 @@ const TOO_MANY_LOGS_FINGERPRINTS = [
   "ServerError(-32005)",
   "503 Service Unavailable",
   "ServerError(-32000)",
+  "Socket connection timeout",
+  "Request failed with status code 503",
+  "aborted",
 ];
 
 export { TOO_MANY_LOGS_FINGERPRINTS };

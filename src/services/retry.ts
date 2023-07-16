@@ -2,6 +2,7 @@ import { BigNumber } from "ethers";
 import { Logger } from "winston";
 import { IndexerConfig } from "../config/indexer";
 import { timeout, wait } from "../utils/timeout";
+import { setProviderIndex } from "../config/chainConfig";
 
 class ExponentialBackOff {
   private _current: number;
@@ -148,7 +149,7 @@ export class RetryConfig {
   public async run_retry_with_timeout(
     try_it: Promise<any>,
   ): Promise<any | undefined> {
-    if (this.limit <= 0) {
+    if (this.limit < this.attempt_count) {
       const request_limit_error = new Error(
         `Request has reached the limitation error!`,
       );
@@ -158,23 +159,25 @@ export class RetryConfig {
 
     try {
       this.attempt_count += 1;
-      this.limit -= 1;
+      // this.limit -= 1;
       let result = await timeout(try_it, this.timeout);
       return result;
     } catch (err: any) {
+      console.log("ERROR: ", err.message);
       let isElapsed;
       if (err.name === "TimeoutErr::Elapsed") {
         isElapsed = true;
       }
+
       if (isElapsed) {
         if (this.attempt_count >= this.log_after) {
           this.logger.info(
             `Trying again after ${this.operation_name} timed out (attempt #${this.attempt_count})`,
           );
         }
-        let duration = this.backoff.next_duration();
-        await wait(duration);
-        return await this.run_retry(try_it);
+        // let duration = this.backoff.next_duration();
+        // await wait(duration);
+        // return await this.run_retry(try_it);
       } else {
         if (this.too_many_logs_fingerprints.indexOf(err.message) < 0) {
           const intolerant_error: any = new Error(
@@ -184,6 +187,7 @@ export class RetryConfig {
           intolerant_error.inner = err.message;
           throw intolerant_error;
         }
+
         if (this.attempt_count >= this.warn_after) {
           // This looks like it would be nice to de-duplicate, but if we try
           // to use log! slog complains about requiring a const for the log level
@@ -197,6 +201,7 @@ export class RetryConfig {
             `Trying again after ${this.operation_name} failed (attempt #${this.attempt_count}) with result ${err.message}`,
           );
         }
+
         let duration = this.backoff.next_duration();
         await wait(duration);
         return await this.run_retry(try_it);

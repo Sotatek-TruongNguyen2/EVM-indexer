@@ -9,15 +9,36 @@ import { getIndexerLogger } from "../../utils/logger";
 import { IndexerConfig } from "../../config/indexer";
 import { callRPCMethod } from "../../utils/rpcRequest";
 import { Document, ObjectId } from "mongoose";
+import { BlockPtr } from "../../types";
 
 export type Deployment = {
   id: ObjectId;
   deployment: string;
 };
 
+export const set_synced = async (deployment_id: string, synced?: boolean) => {
+  let updated_row = await ContractDeployment.updateOne(
+    {
+      _id: { $eq: deployment_id },
+    },
+    {
+      $set: {
+        synced,
+      },
+    },
+    {
+      new: true,
+    },
+  );
+
+  if (!updated_row) {
+    throw new Error(`Deployment ID ${deployment_id} not found!`);
+  }
+};
+
 export const update_latest_ethereum_block = async (
   deployment_id: string,
-  block: Block,
+  block: BlockPtr,
 ) => {
   // const deployment = await ContractDeployment.find({
   //   $gt
@@ -41,13 +62,13 @@ export const update_latest_ethereum_block = async (
     },
     {
       $set: {
-        "latest_ethereum_block_hash ": block.hash,
-        "latest_ethereum_block_number": block.number,
+        latest_ethereum_block_hash: block.hash,
+        latest_ethereum_block_number: block.number,
       },
     },
   );
 
-  console.log("UPDATED ROW: ", updated_row);
+  // console.log("UPDATED ROW: ", updated_row);
 
   if (!updated_row) {
     throw new Error(`Deployment ID ${deployment_id} not found!`);
@@ -65,9 +86,15 @@ export const get_all_deployments = async (): Promise<
 
 export const get_deployment_latest_block = async (
   id: String,
-): Promise<number | undefined> => {
+): Promise<BlockPtr | undefined> => {
   const deployment = await ContractDeployment.findById(id);
-  return deployment?.latest_ethereum_block_number;
+  if (!deployment) {
+    return;
+  }
+  return {
+    hash: deployment.latest_ethereum_block_hash as string,
+    number: deployment.latest_ethereum_block_number as number,
+  };
 };
 
 export const save_contract_deployments = async () => {
@@ -97,6 +124,8 @@ export const save_contract_deployments = async () => {
         ),
       );
 
+      console.log("hash: ", contract_deployment_hash);
+
       logger.debug(
         `proceeding to process saving contract deployment with ChainId = ${id}, Contract Address = ${deployment.contract}, Deployment Hash = ${contract_deployment_hash}`,
       );
@@ -116,6 +145,17 @@ export const save_contract_deployments = async () => {
         };
       }
 
+      const handler_mapping = new Map();
+
+      for (let handler_topic of Object.keys(deployment.handlers)) {
+        if (!handler_mapping.get(handler_topic)) {
+          handler_mapping.set(
+            handler_topic,
+            deployment.handlers[handler_topic],
+          );
+        }
+      }
+
       const contract_deployment = new ContractDeployment({
         non_fatal_errors: [],
         chain_id: id,
@@ -127,6 +167,8 @@ export const save_contract_deployments = async () => {
         synced: false,
         deployment: contract_deployment_hash,
         filters: deployment.filters,
+        abi: deployment.abi,
+        handlers: handler_mapping,
       });
 
       mongo_prepared_deployments.push({

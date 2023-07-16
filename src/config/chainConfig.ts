@@ -3,14 +3,10 @@ import { ethers } from "ethers";
 import { ChainId } from "../common/chainId";
 import { Networks } from "./networks";
 import { ChainsConfig } from "../types";
-import { getIndexerLogger } from "../utils/logger";
-
-let logger = getIndexerLogger("chainConfig");
 
 let _CURRENT_PROVIDER_INDEX = 0;
 let _PROVIDER_CACHE: { [network: ChainId]: ethers.providers.JsonRpcProvider } =
   {};
-let _TOKEN_CONTRACT_CACHE = {};
 
 const ChainConfig: ChainsConfig = {
   // [ChainId.ETH]: {
@@ -42,17 +38,17 @@ const ChainConfig: ChainsConfig = {
     id: ChainId.BSC_TESTNET,
     name: Networks.BSC_TESTNET.name,
     rpcUrls: () => [
+      process.env.BSC_RPC_1 as string,
       process.env.BSC_RPC as string,
-      // process.env.BSC_RPC_1 as string,
       // process.env.BSC_RPC_2 as string,
       // process.env.BSC_RPC_3 as string,
       // process.env.BSC_RPC_4 as string,
     ],
     deployments: [
       {
-        contract: "0x009A243F4614819B5ADF2CcAe005a3b556660663",
-        start_block: 30420453, // Block to backindex until
-        oldest_block: 30420453, // Start indexing older txns from here until startblock
+        contract: "0x81d7d8cad69dc2a767dce326e03d1bd388c28aa5",
+        start_block: 31348852, // Block to backindex until
+        oldest_block: 31348852, // Start indexing older txns from here until startblock
         // tokens: buildTokenInfo(ChainId.ETH),
         filters: {
           "0x7ed629d198faf210a8b65c3c30bf1ab4a789fb6123ed208a03358fcebe7c9dd8":
@@ -67,6 +63,12 @@ const ChainConfig: ChainsConfig = {
             {
               eventName: "CommissionRewardReferrerByLevel",
             },
+        },
+        handlers: {
+          "0x5548c837ab068cf56a2c2479df0882a4922fd203edb7517321831d95078c5f62":
+            "user_deposit_handler",
+          // "0x7ed629d198faf210a8b65c3c30bf1ab4a789fb6123ed208a03358fcebe7c9dd8":
+          //   "referral_added_handler",
         },
       },
     ],
@@ -245,20 +247,27 @@ function getRPCProvider(chainId: ChainId) {
     !_PROVIDER_CACHE[chainId] &&
     _CURRENT_PROVIDER_INDEX < ChainConfig[chainId].rpcUrls().length
   ) {
-    _PROVIDER_CACHE[chainId] = new ethers.providers.JsonRpcProvider(
+    _PROVIDER_CACHE[chainId] = new ethers.providers.StaticJsonRpcProvider(
       ChainConfig[chainId].rpcUrls()[_CURRENT_PROVIDER_INDEX],
     );
+
+    // await _PROVIDER_CACHE[chainId].ready;
   }
+  console.log(
+    "_PROVIDER_CACHE[chainId]: ",
+    _PROVIDER_CACHE[chainId].connection.url,
+  );
 
   return _PROVIDER_CACHE[chainId];
 }
 
-function setCurrentProviderIndex(chainId: ChainId, index: number) {
+function setProviderIndex(chainId: ChainId): ethers.providers.JsonRpcProvider {
   if (_CURRENT_PROVIDER_INDEX + 1 >= ChainConfig[chainId].rpcUrls().length) {
     _CURRENT_PROVIDER_INDEX = 0;
   }
 
   _CURRENT_PROVIDER_INDEX += 1;
+  return getRPCProvider(chainId);
 }
 
 // /**
@@ -3054,7 +3063,7 @@ function getValidatorSetABI() {
 export {
   ChainConfig,
   getRPCProvider,
-  setCurrentProviderIndex,
+  setProviderIndex,
   //   getW3Provider,
   //   buildBridgeContract,
   //   getTokenContract,

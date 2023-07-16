@@ -1,6 +1,10 @@
-import { Logger } from "winston";
-import { getRPCProvider } from "../config/chainConfig";
 import axios from "axios";
+
+import { getRPCProvider, setProviderIndex } from "../config/chainConfig";
+import { TOO_MANY_LOGS_FINGERPRINTS } from "../services/errors";
+import { RedisConnection } from "../caching/redis";
+import { IndexerConfig } from "../config/indexer";
+import { Logger } from "winston";
 
 /***
  * Wraps any callable with a retry mechanism, primarily used for fault tolerance
@@ -15,24 +19,65 @@ export async function callRPCMethod(
   chainId: number,
   callable: string,
   params?: any,
+  logger?: Logger,
 ): Promise<any> {
+  let redis_client = RedisConnection.getClient();
+  let indexer_config = IndexerConfig.getInstance();
+  // while (true) {
   let provider = getRPCProvider(chainId);
   let res = null;
+  const failed_time = redis_client.get(`${chainId}_${callable}_failed_counter`);
+
+  console.log("gg: ", `${chainId}_${callable}_failed_counter`);
+
   try {
     res = await (params ? provider[callable](...params) : provider[callable]());
+    await redis_client.del(`${chainId}_${callable}_failed_counter`);
+    return res;
   } catch (err: any) {
     console.log(err.message);
+    const updated_failed_time = failed_time ? Number(failed_time) + 1 : 0;
+    await redis_client.set(
+      `${chainId}_${callable}_failed_counter`,
+      updated_failed_time,
+    );
+
+    const matched = TOO_MANY_LOGS_FINGERPRINTS.some((error) =>
+      err.message.includes(error),
+    );
+    if (
+      matched &&
+      updated_failed_time >
+        indexer_config.MAXIMUM_RPC_REQUEST_FAILED_TOLERANT_TIMES
+    ) {
+      const new_rpc_url = setProviderIndex(chainId);
+      logger &&
+        logger.info(
+          `Set network ${chainId} current RPC url to: ${new_rpc_url.connection.url}`,
+        );
+      await redis_client.del(`${chainId}_${callable}_failed_counter`);
+    }
+
     throw err;
   }
-  return res;
 }
 
 export async function callRPCRawMethod(
   chainId: number,
   method?: string,
   params?: any[],
+  logger?: Logger,
 ): Promise<any> {
-  let provider = getRPCProvider(chainId);
+  let provider = await getRPCProvider(chainId);
+  let redis_client = RedisConnection.getClient();
+  let indexer_config = IndexerConfig.getInstance();
+
+  const failed_time = redis_client.get(
+    `raw_${chainId}_${method}_failed_counter`,
+  );
+
+  console.log("zz: ", `raw_${chainId}_${method}_failed_counter`);
+
   const instance = axios.create({
     baseURL: provider.connection.url,
     headers: {
@@ -58,9 +103,33 @@ export async function callRPCRawMethod(
       },
     );
 
+    await redis_client.del(`raw_${chainId}_${method}_failed_counter`);
+
     res = response.data.result;
+    return res;
   } catch (err: any) {
+    const updated_failed_time = failed_time ? Number(failed_time) + 1 : 0;
+    await redis_client.set(
+      `raw_${chainId}_${method}_failed_counter`,
+      updated_failed_time,
+    );
+
+    const matched = TOO_MANY_LOGS_FINGERPRINTS.some((error) =>
+      err.message.includes(error),
+    );
+    if (
+      matched &&
+      updated_failed_time >
+        indexer_config.MAXIMUM_RPC_REQUEST_FAILED_TOLERANT_TIMES
+    ) {
+      const new_rpc_url = setProviderIndex(chainId);
+      logger &&
+        logger.info(
+          `Set network ${chainId} current RPC url to: ${new_rpc_url.connection.url}`,
+        );
+      await redis_client.del(`raw_${chainId}_${method}_failed_counter`);
+    }
+
     throw err;
   }
-  return res;
 }

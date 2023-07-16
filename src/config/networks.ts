@@ -1,5 +1,5 @@
-import { Distinct, ID } from '../types';
-import { ChainId, chainSupportsEIP1559 } from '../common/chainId';
+import { Distinct, ID } from "../types";
+import { ChainId, chainSupportsEIP1559 } from "../common/chainId";
 
 interface NetworkArgs {
   name: string;
@@ -36,106 +36,106 @@ namespace Networks {
   }
 
   export const ETH = new Network({
-    name: 'Ethereum Mainnet',
+    name: "Ethereum Mainnet",
     chainId: ChainId.ETH,
-    chainCurrency: 'ETH',
-    chainCurrencyCoingeckoId: 'ethereum',
+    chainCurrency: "ETH",
+    chainCurrencyCoingeckoId: "ethereum",
   });
 
   const OPTIMISM = new Network({
-    name: 'Optimism',
+    name: "Optimism",
     chainId: ChainId.OPTIMISM,
-    chainCurrency: 'ETH',
-    chainCurrencyCoingeckoId: 'ethereum',
+    chainCurrency: "ETH",
+    chainCurrencyCoingeckoId: "ethereum",
   });
 
   const CRONOS = new Network({
-    name: 'Cronos',
+    name: "Cronos",
     chainId: ChainId.CRONOS,
-    chainCurrency: 'CRO',
-    chainCurrencyCoingeckoId: 'crypto-com-chain',
+    chainCurrency: "CRO",
+    chainCurrencyCoingeckoId: "crypto-com-chain",
   });
 
   export const BSC = new Network({
-    name: 'Binance Smart Chain',
+    name: "Binance Smart Chain",
     chainId: ChainId.BSC,
-    chainCurrency: 'BNB',
-    chainCurrencyCoingeckoId: 'binancecoin',
+    chainCurrency: "BNB",
+    chainCurrencyCoingeckoId: "binancecoin",
   });
 
   export const BSC_TESTNET = new Network({
-    name: 'Binance Smart Chain Testnet',
+    name: "Binance Smart Chain Testnet",
     chainId: ChainId.BSC_TESTNET,
-    chainCurrency: 'BNB',
-    chainCurrencyCoingeckoId: 'binancecoin',
+    chainCurrency: "BNB",
+    chainCurrencyCoingeckoId: "binancecoin",
   });
 
   const POLYGON = new Network({
-    name: 'Polygon',
+    name: "Polygon",
     chainId: ChainId.POLYGON,
-    chainCurrency: 'MATIC',
-    chainCurrencyCoingeckoId: 'matic-network',
+    chainCurrency: "MATIC",
+    chainCurrencyCoingeckoId: "matic-network",
   });
 
   const FANTOM = new Network({
-    name: 'Fantom',
+    name: "Fantom",
     chainId: ChainId.FANTOM,
-    chainCurrency: 'FTM',
-    chainCurrencyCoingeckoId: 'fantom',
+    chainCurrency: "FTM",
+    chainCurrencyCoingeckoId: "fantom",
   });
 
   const BOBA = new Network({
-    name: 'Boba Network',
+    name: "Boba Network",
     chainId: ChainId.BOBA,
-    chainCurrency: 'ETH',
-    chainCurrencyCoingeckoId: 'ethereum',
+    chainCurrency: "ETH",
+    chainCurrencyCoingeckoId: "ethereum",
   });
 
   const METIS = new Network({
-    name: 'Metis',
+    name: "Metis",
     chainId: ChainId.METIS,
-    chainCurrency: 'METIS',
-    chainCurrencyCoingeckoId: 'metis-token',
+    chainCurrency: "METIS",
+    chainCurrencyCoingeckoId: "metis-token",
   });
 
   const MOONBEAM = new Network({
-    name: 'Moonbeam',
+    name: "Moonbeam",
     chainId: ChainId.MOONBEAM,
-    chainCurrency: 'GLMR',
-    chainCurrencyCoingeckoId: 'moonbeam',
+    chainCurrency: "GLMR",
+    chainCurrencyCoingeckoId: "moonbeam",
   });
 
   const MOONRIVER = new Network({
-    name: 'Moonriver',
+    name: "Moonriver",
     chainId: ChainId.MOONRIVER,
-    chainCurrency: 'MOVR',
+    chainCurrency: "MOVR",
   });
 
   const ARBITRUM = new Network({
-    name: 'Arbitrum',
+    name: "Arbitrum",
     chainId: ChainId.ARBITRUM,
-    chainCurrency: 'ETH',
-    chainCurrencyCoingeckoId: 'ethereum',
+    chainCurrency: "ETH",
+    chainCurrencyCoingeckoId: "ethereum",
   });
 
   const AVALANCHE = new Network({
-    name: 'Avalanche C-Chain',
+    name: "Avalanche C-Chain",
     chainId: ChainId.AVALANCHE,
-    chainCurrency: 'AVAX',
-    chainCurrencyCoingeckoId: 'avalanche-2',
+    chainCurrency: "AVAX",
+    chainCurrencyCoingeckoId: "avalanche-2",
   });
 
   const AURORA = new Network({
-    name: 'Aurora',
+    name: "Aurora",
     chainId: ChainId.AURORA,
-    chainCurrency: 'ETH',
+    chainCurrency: "ETH",
   });
 
   const HARMONY = new Network({
-    name: 'Harmony',
+    name: "Harmony",
     chainId: ChainId.HARMONY,
-    chainCurrency: 'ONE',
-    chainCurrencyCoingeckoId: 'harmony',
+    chainCurrency: "ONE",
+    chainCurrencyCoingeckoId: "harmony",
   });
 }
 

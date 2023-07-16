@@ -52,6 +52,7 @@ interface IndexerConfigType {
   /// node operators.
   ETHEREUM_MAX_EVENT_ONLY_RANGE: number;
   ETHEREUM_BLOCK_BATCH_SIZE: number;
+  MAXIMUM_RPC_REQUEST_FAILED_TOLERANT_TIMES: number;
 }
 // A high number here forces a slow start.
 export const STARTING_PREVIOUS_TRIGGERS_PER_BLOCK = 1_000_000;
@@ -61,6 +62,9 @@ export class IndexerConfig {
   public static getInstance(): IndexerConfigType {
     if (!IndexerConfig.instance) {
       IndexerConfig.instance = {
+        MAXIMUM_RPC_REQUEST_FAILED_TOLERANT_TIMES: Number(
+          process.env.MAXIMUM_RPC_TOLERANT_TIMES || 5,
+        ),
         ETH_GET_LOGS_MAX_CONTRACTS: Number(
           process.env.ETH_GET_LOGS_MAX_CONTRACTS || 2000,
         ),
@@ -69,7 +73,7 @@ export class IndexerConfig {
           process.env.ETHEREUM_JSON_RPC_TIMEOUT || 180000,
         ),
         INGESTOR_POLLING_INTERVAL: Number(
-          process.env.INGESTOR_POLLING_INTERVAL || 3000,
+          process.env.INGESTOR_POLLING_INTERVAL || 10000,
         ),
         REQUEST_RETRIES: Number(process.env.REQUEST_RETRIES || 10),
         ETHEREUM_MAX_BLOCK_RANGE_SIZE: Number(
@@ -82,7 +86,8 @@ export class IndexerConfig {
           process.env.ETHEREUM_MAX_EVENT_ONLY_RANGE || 500,
         ),
         GRAPH_START_BLOCK: process.env.GRAPH_START_BLOCK || null,
-        REORG_THRESHOLD: Number(process.env.REORG_THRESHOLD || 250),
+        // REORG_THRESHOLD: Number(process.env.REORG_THRESHOLD || 250),
+        REORG_THRESHOLD: Number(process.env.REORG_THRESHOLD || 5),
         ETHEREUM_BLOCK_BATCH_SIZE: Number(
           process.env.ETHEREUM_BLOCK_BATCH_SIZE || 10,
         ),

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ChainStoreSchema = new mongoose.Schema({
+export const ChainStoreSchema = new mongoose.Schema({
   head_block_hash: {
     type: String,
     required: true,

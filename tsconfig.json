@@ -10,7 +10,8 @@
     "strictPropertyInitialization": false,
     "noImplicitAny": false,
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "downlevelIteration": true
   },
   "exclude": [
     "./src/blockchain/abi"

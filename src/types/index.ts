@@ -1,10 +1,15 @@
-import { ChainId } from '../common/chainId';
+import { Block, Log } from "@ethersproject/abstract-provider";
+import { ChainId } from "../common/chainId";
+import { LogWithSender } from "../interfaces";
 
 type ChainConfig = {
   contract: string;
   start_block: number;
   oldest_block?: number;
   filters: { [hash: string]: { eventName: string } };
+  handlers: {
+    [topic: string]: string;
+  };
 };
 
 type ChainsConfig = {
@@ -24,4 +29,36 @@ interface Distinct {
 
 type ValueOf<T> = T[keyof T];
 
-export { ChainId, ChainsConfig, ChainConfig, ID, Distinct, ValueOf };
+type ChainHeadPtr = {
+  number: number;
+  hash: string;
+};
+
+type BlockPtr = {
+  number: number;
+  hash: string;
+};
+
+type CacheBlockPtr = {
+  parent_hash: string;
+  ptr: BlockPtr;
+  is_finalized: boolean;
+};
+
+type BlockWithLogs = Block & {
+  logs: LogWithSender[];
+  finalized: boolean;
+};
+
+export {
+  ChainId,
+  ChainsConfig,
+  ChainConfig,
+  ID,
+  Distinct,
+  ValueOf,
+  CacheBlockPtr,
+  ChainHeadPtr,
+  BlockPtr,
+  BlockWithLogs,
+};
