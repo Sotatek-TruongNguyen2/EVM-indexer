@@ -15,8 +15,8 @@ export interface IUserModel extends Document {
   interest_rate: number;
   global_interest_rate: number;
   accumulative_index: number;
-  last_accrued_index: number;
-  total_global_reward: number;
+  last_accrued_timestamp: number;
+  total_global_reward: string;
 }
 
 export const BranchStaking = new mongoose.Schema(
@@ -84,13 +84,13 @@ export const UserModelSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
-  last_accrued_index: {
+  last_accrued_timestamp: {
     type: Number,
     required: true,
     default: 0,
   },
   total_global_reward: {
-    type: Number,
+    type: String,
     required: true,
     default: 0,
   },

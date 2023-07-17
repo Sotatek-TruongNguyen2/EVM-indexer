@@ -1,10 +1,10 @@
 import { user_deposit_handler } from "./user-deposit-handler";
-// import { referral_added_handler } from "./referral-added-handler";
+import { user_withdraw_handler } from "./user-withdraw-handler";
 import { ILogHandler } from "../../interfaces";
 
 export const handlers = {
   user_deposit_handler,
-  // referral_added_handler,
+  user_withdraw_handler,
 };
 
 export const getHandlerByName = (name: string): ILogHandler => {

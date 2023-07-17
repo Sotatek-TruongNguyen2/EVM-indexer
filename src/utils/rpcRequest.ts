@@ -26,9 +26,9 @@ export async function callRPCMethod(
   // while (true) {
   let provider = getRPCProvider(chainId);
   let res = null;
-  const failed_time = redis_client.get(`${chainId}_${callable}_failed_counter`);
-
-  console.log("gg: ", `${chainId}_${callable}_failed_counter`);
+  const failed_time = await redis_client.get(
+    `${chainId}_${callable}_failed_counter`,
+  );
 
   try {
     res = await (params ? provider[callable](...params) : provider[callable]());
@@ -64,7 +64,7 @@ export async function callRPCMethod(
 
 export async function callRPCRawMethod(
   chainId: number,
-  method?: string,
+  method: string,
   params?: any[],
   logger?: Logger,
 ): Promise<any> {
@@ -72,11 +72,11 @@ export async function callRPCRawMethod(
   let redis_client = RedisConnection.getClient();
   let indexer_config = IndexerConfig.getInstance();
 
-  const failed_time = redis_client.get(
+  const failed_time = await redis_client.get(
     `raw_${chainId}_${method}_failed_counter`,
   );
 
-  console.log("zz: ", `raw_${chainId}_${method}_failed_counter`);
+  console.log(`raw_${chainId}_${method}_failed_counter`, failed_time);
 
   const instance = axios.create({
     baseURL: provider.connection.url,

@@ -51,24 +51,24 @@ const ChainConfig: ChainsConfig = {
         oldest_block: 31348852, // Start indexing older txns from here until startblock
         // tokens: buildTokenInfo(ChainId.ETH),
         filters: {
-          "0x7ed629d198faf210a8b65c3c30bf1ab4a789fb6123ed208a03358fcebe7c9dd8":
-            {
-              eventName: "ReferralLevelAdded",
-            },
+          // "0x7ed629d198faf210a8b65c3c30bf1ab4a789fb6123ed208a03358fcebe7c9dd8":
+          //   {
+          //     eventName: "ReferralLevelAdded",
+          //   },
           "0x5548c837ab068cf56a2c2479df0882a4922fd203edb7517321831d95078c5f62":
             {
               eventName: "Deposit",
             },
-          "0x00735a7974318eab881fca7e6e81da821897b276ce2d5bcf5bd5679d8da792ad":
+          "0x884edad9ce6fa2440d8a54cc123490eb96d2768479d49ff9c7366125a9424364":
             {
-              eventName: "CommissionRewardReferrerByLevel",
+              eventName: "Withdraw",
             },
         },
         handlers: {
           "0x5548c837ab068cf56a2c2479df0882a4922fd203edb7517321831d95078c5f62":
             "user_deposit_handler",
-          // "0x7ed629d198faf210a8b65c3c30bf1ab4a789fb6123ed208a03358fcebe7c9dd8":
-          //   "referral_added_handler",
+          "0x884edad9ce6fa2440d8a54cc123490eb96d2768479d49ff9c7366125a9424364":
+            "user_withdraw_handler",
         },
       },
     ],
@@ -253,10 +253,10 @@ function getRPCProvider(chainId: ChainId) {
 
     // await _PROVIDER_CACHE[chainId].ready;
   }
-  console.log(
-    "_PROVIDER_CACHE[chainId]: ",
-    _PROVIDER_CACHE[chainId].connection.url,
-  );
+  // console.log(
+  //   "_PROVIDER_CACHE[chainId]: ",
+  //   _PROVIDER_CACHE[chainId].connection.url,
+  // );
 
   return _PROVIDER_CACHE[chainId];
 }

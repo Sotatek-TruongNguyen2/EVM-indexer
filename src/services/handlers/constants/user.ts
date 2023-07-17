@@ -29,10 +29,12 @@ const UserStakingInterest = {
 };
 
 const ACCUMULATIVE_PRECISION = 1e18;
+const BASIS_POINT = 10000;
 
 export {
   UserLevel,
   UserStakingInterest,
   UserLevelGlobalInterest,
   ACCUMULATIVE_PRECISION,
+  BASIS_POINT,
 };

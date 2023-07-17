@@ -6,14 +6,12 @@ import { EnvironmentConfig } from "../../../config/env";
 export const upsert_new_node = (
   str: string,
   node,
-  level?: UserLevel,
-  interest_rate?: number,
+  data?: any,
+  //   level?: UserLevel,
+  //   interest_rate?: number,
 ) => {
   if (str.length === 0) {
-    node.data = {
-      level: level || UserLevel.UNKNOWN,
-      interest_rate: interest_rate || 0,
-    };
+    node.data = Object.assign(node.data || {}, data);
     node.end = true;
     return node;
   }
@@ -23,15 +21,13 @@ export const upsert_new_node = (
     node.keys[str[0]] = upsert_new_node(
       str.substring(1),
       node.keys[str[0]],
-      level,
-      interest_rate,
+      data,
     );
   } else {
     node.keys[str[0]] = upsert_new_node(
       str.substring(1),
       node.keys[str[0]],
-      level,
-      interest_rate,
+      data,
     );
   }
 
@@ -73,8 +69,9 @@ export const get_user_data_trie = async (): Promise<
 
 export const upsert_user_data = async (
   user_addr: string,
-  level?: UserLevel,
-  global_interest_rate?: number,
+  data?: any,
+  //   level?: UserLevel,
+  //   global_interest_rate?: number,
 ) => {
   const user_data_trie = await get_user_data_trie();
 
@@ -83,7 +80,7 @@ export const upsert_user_data = async (
   let default_root_trie = { keys: {}, data: {}, end: false };
   let trie = user_data_trie ? user_data_trie.trie : default_root_trie;
 
-  trie = upsert_new_node(address_without_0x, trie, level, global_interest_rate);
+  trie = upsert_new_node(address_without_0x, trie, data);
 
   await UserDataTrie.findByIdAndUpdate(
     user_data_trie ? user_data_trie._id : 1,
@@ -174,6 +171,12 @@ export const get_user_current_level = async (
     if (branch_types[UserLevel.SAPPHIRE] >= 2) {
       return UserLevel.RUBY;
     }
+
+    // console.log(
+    //   "zxczxcx: ",
+    //   unknown_branches_staking,
+    //   environment_config.SHAPPIRE_LEVEL_STAKING_CONDITION,
+    // );
 
     if (
       new BigNumber(unknown_branches_staking).gte(

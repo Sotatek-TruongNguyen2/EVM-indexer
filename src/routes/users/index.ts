@@ -1,9 +1,7 @@
 import express from "express";
 import { User } from "../../services/handlers/models/user.model";
-import { get_user_current_level } from "../../helpers/get_user_current_level";
 import { RedisConnection } from "../../caching/redis";
 import { UserLevel } from "../../services/handlers/constants";
-import { ethers } from "ethers";
 
 const routes = express.Router();
 const USER_LEVEL_PREFIX = "USER_LEVEL";
@@ -33,24 +31,7 @@ routes.route("/level/:address").get(async function (req, res) {
   let user_current_level = UserLevel.UNKNOWN;
 
   if (user) {
-    user_current_level = await get_user_current_level(user.branches);
-
-    if (user.level !== user_current_level) {
-      await User.updateOne(
-        {
-          address,
-        },
-        {
-          $set: {
-            level: user_current_level,
-          },
-        },
-        {
-          new: true,
-        },
-      );
-    }
-
+    user_current_level = user.level as UserLevel;
     // will cached the current user level in 5 minutes
     await redis_client.setex(
       `${USER_LEVEL_PREFIX}_${address}`,

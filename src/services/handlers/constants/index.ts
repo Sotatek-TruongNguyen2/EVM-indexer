@@ -3,6 +3,7 @@ import {
   UserLevel,
   UserLevelGlobalInterest,
   ACCUMULATIVE_PRECISION,
+  BASIS_POINT,
 } from "./user";
 import {
   SECONDS_IN_DAY_IN_MILLISECONDS,
@@ -16,4 +17,5 @@ export {
   UserLevel,
   UserLevelGlobalInterest,
   TransactionCategory,
+  BASIS_POINT,
 };
