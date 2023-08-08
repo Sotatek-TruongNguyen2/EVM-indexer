@@ -1,4 +1,4 @@
-import { Redis, RedisOptions } from 'ioredis';
+import { RedisOptions } from 'ioredis';
 
 export type RedisConfig = {
   port: number;
@@ -9,7 +9,10 @@ export type RedisConfig = {
 export const redisConfig: RedisConfig = {
   host: process.env.REDIS_HOST || 'localhost',
   port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379,
-  options: {},
+  options: {
+    username: "default",
+    password: process.env.REDIS_PASSWORD || "",
+  },
 };
 
 export const getDefaultRedisConfig = (): RedisConfig => {

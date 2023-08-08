@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
@@ -7,9 +10,7 @@ import { RedisConnection } from "./caching/redis";
 import { BlockchainIndexer } from "./blockchain-indexer";
 
 const main = async () => {
-  let redis_client = await RedisConnection.getClient({
-    password: process.env.REDIS_PASSWORD,
-  });
+  let redis_client = await RedisConnection.getClient();
 
   try {
     await redis_client.ping(() => {

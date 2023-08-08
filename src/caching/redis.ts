@@ -13,6 +13,7 @@ export class RedisConnection {
           ? optionsOverride
           : redisConfig.options;
 
+        console.log(redisConfig, redisOptions);
         this._CLIENT = new Redis(
           redisConfig.port,
           redisConfig.host,

@@ -1,8 +1,4 @@
 // require("ts-node").register({});
-
-import dotenv from "dotenv";
-dotenv.config();
-
 import {
   get_all_deployments,
   save_contract_deployments,
