@@ -10,4 +10,4 @@ COPY . /app
 
 EXPOSE 80 
 
-CMD ["yarn", "start:watch"]
+CMD ["yarn", "start:dev"]

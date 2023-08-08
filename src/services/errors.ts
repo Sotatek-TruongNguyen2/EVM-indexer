@@ -7,6 +7,7 @@ const TOO_MANY_LOGS_FINGERPRINTS = [
   "Socket connection timeout",
   "Request failed with status code 503",
   "aborted",
+  `could not detect network (event="noNetwork"`,
 ];
 
 export { TOO_MANY_LOGS_FINGERPRINTS };

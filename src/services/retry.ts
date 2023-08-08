@@ -90,7 +90,7 @@ export class RetryConfig {
     this._timeout = timeout || indexer_config.ETHEREUM_JSON_RPC_TIMEOUT;
     this._attempt_count = 0;
 
-    let max_delay_ms = 30000;
+    let max_delay_ms = 15000;
     this._backoff = new ExponentialBackOff(2000, max_delay_ms);
   }
 
@@ -201,11 +201,12 @@ export class RetryConfig {
             `Trying again after ${this.operation_name} failed (attempt #${this.attempt_count}) with result ${err.message}`,
           );
         }
-
-        let duration = this.backoff.next_duration();
-        await wait(duration);
-        return await this.run_retry(try_it);
       }
+
+      let duration = this.backoff.next_duration();
+      // setTimeout(() => {}, duration);
+      await wait(duration);
+      return await this.run_retry(try_it);
     }
   }
 }

@@ -73,7 +73,7 @@ export class IndexerConfig {
           process.env.ETHEREUM_JSON_RPC_TIMEOUT || 180000,
         ),
         INGESTOR_POLLING_INTERVAL: Number(
-          process.env.INGESTOR_POLLING_INTERVAL || 10000,
+          process.env.INGESTOR_POLLING_INTERVAL || 2000,
         ),
         REQUEST_RETRIES: Number(process.env.REQUEST_RETRIES || 10),
         ETHEREUM_MAX_BLOCK_RANGE_SIZE: Number(
@@ -87,7 +87,7 @@ export class IndexerConfig {
         ),
         GRAPH_START_BLOCK: process.env.GRAPH_START_BLOCK || null,
         // REORG_THRESHOLD: Number(process.env.REORG_THRESHOLD || 250),
-        REORG_THRESHOLD: Number(process.env.REORG_THRESHOLD || 5),
+        REORG_THRESHOLD: Number(process.env.REORG_THRESHOLD || 50),
         ETHEREUM_BLOCK_BATCH_SIZE: Number(
           process.env.ETHEREUM_BLOCK_BATCH_SIZE || 10,
         ),

@@ -35,8 +35,9 @@ export async function callRPCMethod(
     await redis_client.del(`${chainId}_${callable}_failed_counter`);
     return res;
   } catch (err: any) {
-    console.log(err.message);
+    console.log("ERROR: ", err.message);
     const updated_failed_time = failed_time ? Number(failed_time) + 1 : 0;
+    console.log("updated_failed_time: ", updated_failed_time);
     await redis_client.set(
       `${chainId}_${callable}_failed_counter`,
       updated_failed_time,
@@ -108,7 +109,9 @@ export async function callRPCRawMethod(
     res = response.data.result;
     return res;
   } catch (err: any) {
+    console.log("ERROR: ", err.message);
     const updated_failed_time = failed_time ? Number(failed_time) + 1 : 0;
+    console.log("WE HERE: ", updated_failed_time);
     await redis_client.set(
       `raw_${chainId}_${method}_failed_counter`,
       updated_failed_time,

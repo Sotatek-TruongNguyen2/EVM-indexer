@@ -31,12 +31,17 @@ export const user_deposit_handler: ILogHandler = async (logger, log_params) => {
 
     // Make sure it returns old data
     const current_user = await update_user_info(
-      {
-        address: user,
-        referralBy: referrer,
-        deposit_amount,
-      },
+      user,
+      deposit_amount,
+      referrer,
       true,
+      false,
+      // {
+      //   address: user,
+      //   referralBy: referrer,
+      //   deposit_amount,
+      // },
+      // true,
     );
 
     await update_user_branches(

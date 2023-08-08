@@ -297,6 +297,7 @@ export class ChainStore {
   }
 
   private async insert_block(block: BlockWithLogs) {
+    // console.log("iNSERT BLOCK", block);
     if (block.parentHash) {
       let chain_head = await this.cached_chain_head();
 
@@ -315,6 +316,7 @@ export class ChainStore {
           JSON.stringify(cached_block),
         );
       } else {
+        console.log("iNTESTING: ", chain_head.ptr, cached_block);
         if (chain_head.ptr.hash === cached_block.parent_hash) {
           // We have a new chain head that is a direct child of our
           // previous chain head, so we get to keep all items in the

@@ -37,13 +37,9 @@ const ChainConfig: ChainsConfig = {
   [ChainId.BSC_TESTNET]: {
     id: ChainId.BSC_TESTNET,
     name: Networks.BSC_TESTNET.name,
-    rpcUrls: () => [
-      process.env.BSC_RPC_1 as string,
-      process.env.BSC_RPC as string,
-      // process.env.BSC_RPC_2 as string,
-      // process.env.BSC_RPC_3 as string,
-      // process.env.BSC_RPC_4 as string,
-    ],
+    rpcUrls: () => {
+      return process.env.BSC_RPC ? process.env.BSC_RPC?.split(",") : [];
+    },
     deployments: [
       {
         contract: "0x81d7d8cad69dc2a767dce326e03d1bd388c28aa5",
@@ -243,15 +239,10 @@ const ChainConfig: ChainsConfig = {
  * @returns {Object}
  */
 function getRPCProvider(chainId: ChainId) {
-  if (
-    !_PROVIDER_CACHE[chainId] &&
-    _CURRENT_PROVIDER_INDEX < ChainConfig[chainId].rpcUrls().length
-  ) {
+  if (_CURRENT_PROVIDER_INDEX < ChainConfig[chainId].rpcUrls().length) {
     _PROVIDER_CACHE[chainId] = new ethers.providers.StaticJsonRpcProvider(
       ChainConfig[chainId].rpcUrls()[_CURRENT_PROVIDER_INDEX],
     );
-
-    // await _PROVIDER_CACHE[chainId].ready;
   }
   // console.log(
   //   "_PROVIDER_CACHE[chainId]: ",
@@ -262,11 +253,12 @@ function getRPCProvider(chainId: ChainId) {
 }
 
 function setProviderIndex(chainId: ChainId): ethers.providers.JsonRpcProvider {
-  if (_CURRENT_PROVIDER_INDEX + 1 >= ChainConfig[chainId].rpcUrls().length) {
+  _CURRENT_PROVIDER_INDEX += 1;
+
+  if (_CURRENT_PROVIDER_INDEX >= ChainConfig[chainId].rpcUrls().length) {
     _CURRENT_PROVIDER_INDEX = 0;
   }
 
-  _CURRENT_PROVIDER_INDEX += 1;
   return getRPCProvider(chainId);
 }
 

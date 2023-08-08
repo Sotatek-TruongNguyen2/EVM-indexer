@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start:dev": "node dist/server.js",
-    "start:watch": "nodemon src/server.ts --config nodemon.json --legacy-watch"
+    "start:prod": "node dist/server.js",
+    "start:dev": "nodemon src/server.ts --config nodemon.json --legacy-watch"
   },
   "dependencies": {
     "@synapseprotocol/sdk": "^0.94.1",

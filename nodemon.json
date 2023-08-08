@@ -2,6 +2,7 @@
   "verbose": true,
   "ignore": ["*.test.js", "**/fixtures/**"],
   "execMap": {
-      "ts": "ts-node"
+      "ts": "ts-node",
+      "TS_NODE_PROJECT": "./tsconfig.json"
   }
 }

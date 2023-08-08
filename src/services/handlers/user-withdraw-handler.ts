@@ -31,21 +31,20 @@ export const user_withdraw_handler: ILogHandler = async (
       tx_hash: log_params.raw_log.transactionHash,
     });
 
-    // // Make sure it returns old data
-    // const current_user = await update_user_info(
-    //   {
-    //     address: user,
-    //     deposit_amount,
-    //   },
-    //   true,
-    //   true,
-    // );
+    // Make sure it returns old data
+    const current_user = await update_user_info(
+      user,
+      withdraw_amount,
+      ethers.constants.AddressZero,
+      true,
+      true,
+    );
 
-    // await update_user_branches(
-    //   current_user,
-    //   deposit_amount,
-    //   log_params.metadata.timestamp,
-    // );
+    await update_user_branches(
+      current_user,
+      withdraw_amount,
+      log_params.metadata.timestamp,
+    );
   } catch (err: any) {
     // logger.warn(`Error when do call the handler err.message`);
     throw err;

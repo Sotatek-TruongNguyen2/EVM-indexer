@@ -37,7 +37,9 @@ services:
       - my-network
   indexer:
     container_name: hail-indexer-crawler
-    build: ./Dockerfile
+    build: 
+      context: ./
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - 8000:8080

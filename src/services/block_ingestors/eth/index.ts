@@ -70,6 +70,7 @@ export class BlockIngestor {
       ]);
 
       let chain_head_ptr = await this.chain_store.chain_head_ptr();
+      console.log("chain_head_ptr: ", chain_head_ptr);
 
       if (chain_head_ptr) {
         if (chain_head_ptr.number == latest_block.number) {
@@ -123,7 +124,7 @@ export class BlockIngestor {
   }
 
   private async do_poll() {
-    this.do_ingest_block();
+    await this.do_ingest_block();
 
     setTimeout(() => {
       this.do_poll();

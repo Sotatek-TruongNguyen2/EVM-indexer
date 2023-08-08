@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
 
 import { IUserModel, User } from "../models/user.model";
-import { IUser } from "../types/IUser";
+// import { IUser } from "../types/IUser";
 import { UserLevel } from "../constants";
 import {
   get_user_current_level,
@@ -14,7 +14,6 @@ import { Document } from "mongodb";
 import { upsert_user_data } from "./trie";
 import { UserDataTrie } from "../models/trie";
 import {
-  ACCUMULATIVE_PRECISION,
   BASIS_POINT,
   UserLevelGlobalInterest,
   UserStakingInterest,
@@ -84,24 +83,35 @@ export const retrieve_user = async (user_addr: string): Promise<IUserModel> => {
 };
 
 export const update_user_info = async (
-  user: IUser,
+  user_address: string,
+  amount: string,
+  referralBy: string,
   old?: boolean,
+  withdraw?: boolean,
 ): Promise<IUserModel> => {
-  let current_user = await retrieve_user(user.address);
+  let current_user = await retrieve_user(user_address);
   let old_current_user = Object.assign({}, current_user);
 
   if (
     current_user.referralBy === ethers.constants.AddressZero &&
-    user.referralBy != ethers.constants.AddressZero
+    referralBy != ethers.constants.AddressZero
   ) {
-    await retrieve_user(user.referralBy);
-    await update_referral_tree_path(user.address, user.referralBy);
-    current_user.referralBy = user.referralBy;
+    await retrieve_user(referralBy);
+    await update_referral_tree_path(user_address, referralBy);
+    current_user.referralBy = referralBy;
   }
 
-  current_user.current_deposit = new BigNumber(current_user.current_deposit)
-    .plus(new BigNumber(user.deposit_amount).div(1e18))
-    .toString();
+  const updated_current_deposit = withdraw
+    ? new BigNumber(current_user.current_deposit).minus(
+        new BigNumber(amount).div(1e18),
+      )
+    : new BigNumber(current_user.current_deposit).plus(
+        new BigNumber(amount).div(1e18),
+      );
+
+  current_user.current_deposit = (
+    updated_current_deposit.lte(0) ? new BigNumber(0) : updated_current_deposit
+  ).toString();
 
   Object.keys(UserStakingInterest).map((staking_range) => {
     const [from, to] = staking_range.split("-");
