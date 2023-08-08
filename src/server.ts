@@ -13,9 +13,9 @@ const main = async () => {
   let redis_client = await RedisConnection.getClient();
 
   try {
-    await redis_client.ping(() => {
-      console.log("Connected to Redis!");
-    });
+    const res = await redis_client.ping();
+    console.log("Redis ping response: ", res);
+    console.log("Connected to Redis!");
   } catch (err: any) {
     throw new Error(err.message);
   }
