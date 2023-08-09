@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
@@ -32,6 +33,12 @@ const main = async () => {
   const app = express();
   const logger = getIndexerLogger("Application-API");
 
+  app.use(
+    cors({
+      origin: "*",
+      methods: ["GET", "POST"],
+    }),
+  );
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
   app.use(
