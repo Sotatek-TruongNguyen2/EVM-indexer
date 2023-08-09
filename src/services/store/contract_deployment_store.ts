@@ -124,7 +124,7 @@ export const save_contract_deployments = async () => {
         ),
       );
 
-      console.log("hash: ", contract_deployment_hash);
+      logger.debug(`contract_deployment_hash: ${contract_deployment_hash}`);
 
       logger.debug(
         `proceeding to process saving contract deployment with ChainId = ${id}, Contract Address = ${deployment.contract}, Deployment Hash = ${contract_deployment_hash}`,

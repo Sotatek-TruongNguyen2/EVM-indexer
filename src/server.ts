@@ -8,6 +8,7 @@ import morgan from "morgan";
 import routes from "./routes";
 import { RedisConnection } from "./caching/redis";
 import { BlockchainIndexer } from "./blockchain-indexer";
+import { getIndexerLogger } from "./utils/logger";
 
 const main = async () => {
   let redis_client = await RedisConnection.getClient();
@@ -29,10 +30,15 @@ const main = async () => {
   blockchain_indexer.start();
 
   const app = express();
+  const logger = getIndexerLogger("Application-API");
 
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
-  app.use(morgan("dev"));
+  app.use(
+    morgan("combined", {
+      stream: { write: (message) => logger.info(message) },
+    }),
+  );
   app.use("/", routes);
 
   const PORT = process.env.SERVER_PORT || 2009;
