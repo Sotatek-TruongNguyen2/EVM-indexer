@@ -60,7 +60,7 @@ export function getIndexerLogger(loggerName: string): Logger {
   });
 
   const logger = createLogger({
-    levels: config.syslog.levels,
+    level: "debug",
     format: combine(label({ label: loggerName }), timestamp(), myFormat),
     transports: transportOptions,
     // transports: [

@@ -20,6 +20,8 @@ import {
 import { Topics } from "../pubsub/topics";
 
 export class ChainStore {
+  private static instance: ChainStore;
+
   private _CACHED_KEY: string;
   private _logger: Logger;
   private _chain_id: number;
@@ -27,6 +29,14 @@ export class ChainStore {
   private _capacity: number;
   private _polling_interval: number;
   private _redis_client: Redis;
+
+  public static getInstance(chain_id: number): ChainStore {
+    if (!ChainStore.instance) {
+      ChainStore.instance = new ChainStore(chain_id);
+    }
+
+    return ChainStore.instance;
+  }
 
   constructor(chain_id: number) {
     const indexer_config = IndexerConfig.getInstance();
@@ -316,7 +326,6 @@ export class ChainStore {
           JSON.stringify(cached_block),
         );
       } else {
-        console.log("iNTESTING: ", chain_head.ptr, cached_block);
         if (chain_head.ptr.hash === cached_block.parent_hash) {
           // We have a new chain head that is a direct child of our
           // previous chain head, so we get to keep all items in the

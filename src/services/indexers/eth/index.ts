@@ -1,9 +1,12 @@
 import PubSub from "pubsub-js";
 import { BigNumber } from "ethers";
 import { Log } from "@ethersproject/abstract-provider";
+
+import Piscina from "piscina";
+
 import { ChainConfig } from "../../../config/chainConfig";
 import { getIndexerLogger } from "../../../utils/logger";
-import { callRPCRawMethod } from "../../../utils/rpcRequest";
+// import { callRPCRawMethod } from "../../../utils/rpcRequest";
 import {
   IndexerConfig,
   STARTING_PREVIOUS_TRIGGERS_PER_BLOCK,
@@ -39,8 +42,8 @@ import { BlockPtr } from "../../../types";
 import { ChangeStream } from "mongodb";
 import { IEthereumBlock } from "../../../models/ethereum-block.model";
 import { Topics } from "../../pubsub/topics";
-import { close } from "fs";
 import { LogWithSender } from "../../../interfaces";
+import { callRPCRawMethod } from "../../../utils/rpcRequest";
 
 export class IndexForward {
   private _previous_triggers_per_block: number;
@@ -53,12 +56,17 @@ export class IndexForward {
   private _chain_store: ChainStore;
   private _deployment_latest_block: BlockPtr | undefined;
 
+  private _pool: Piscina;
   private _logger: Logger;
   private _deployment: IContractDeployment;
   private _adapter: ETHAdapter;
   private _chain_head_emitter: any;
 
-  constructor(deployment: IContractDeployment, chain_store: ChainStore) {
+  constructor(
+    deployment: IContractDeployment,
+    chain_store: ChainStore,
+    pool: Piscina,
+  ) {
     const indexer_config = IndexerConfig.getInstance();
 
     this._chain_store = chain_store;
@@ -71,7 +79,13 @@ export class IndexForward {
     this._max_block_range_size = indexer_config.ETHEREUM_MAX_BLOCK_RANGE_SIZE;
     this._block_polling_interval = indexer_config.NEW_BLOCK_POLLING_INTERVAL;
     this._deployment = deployment;
-    this._adapter = new ETHAdapter(deployment.chain_id, this.chain_store);
+
+    this._pool = pool;
+    this._adapter = new ETHAdapter(
+      deployment.chain_id,
+      this.chain_store,
+      // this._pool,
+    );
 
     const chainConfig = ChainConfig[this.deployment.chain_id as number];
 
@@ -108,6 +122,10 @@ export class IndexForward {
 
   public set chain_head_emitter(chain_head_emitter: any) {
     this._chain_head_emitter = chain_head_emitter;
+  }
+
+  public get pool(): Piscina {
+    return this._pool;
   }
 
   public get chain_head_emitter(): ChangeStream {
@@ -626,10 +644,10 @@ export class IndexForward {
       while (start <= to) {
         const get_logs = (start: number, end: number) => async () => {
           let start_calling = Date.now();
-          let result = await callRPCRawMethod(
-            this.deployment.chain_id,
-            "eth_getLogs",
-            [
+          let result = await callRPCRawMethod({
+            chainId: this.deployment.chain_id,
+            method: "eth_getLogs",
+            params: [
               {
                 fromBlock: `0x${start.toString(16)}`,
                 toBlock: `0x${end.toString(16)}`,
@@ -637,8 +655,25 @@ export class IndexForward {
                 address: filter.contracts,
               },
             ],
-            this.logger,
-          );
+            logger: this.logger,
+          });
+
+          // let result = await this.pool.run(
+          //   {
+          //     chainId: this.deployment.chain_id,
+          //     method: "eth_getLogs",
+          //     params: [
+          //       {
+          //         fromBlock: `0x${start.toString(16)}`,
+          //         toBlock: `0x${end.toString(16)}`,
+          //         topics: [[...filter.event_signatures]],
+          //         address: filter.contracts,
+          //       },
+          //     ],
+          //     // logger: this.logger,
+          //   },
+          //   { name: "callRPCRawMethod" },
+          // );
 
           let elapsed = Date.now() - start_calling;
           this.logger.info(

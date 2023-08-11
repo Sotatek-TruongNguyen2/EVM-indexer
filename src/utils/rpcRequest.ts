@@ -1,3 +1,5 @@
+require("ts-node").register({ transpileOnly: true });
+
 import axios from "axios";
 
 import { getRPCProvider, setProviderIndex } from "../config/chainConfig";
@@ -15,12 +17,17 @@ import { Logger } from "winston";
  * @param chainName
  * @return {Promise<*>}
  */
-export async function callRPCMethod(
-  chainId: number,
-  callable: string,
-  params?: any,
-  logger?: Logger,
-): Promise<any> {
+export async function callRPCMethod({
+  chainId,
+  callable,
+  params,
+  logger,
+}: {
+  chainId: number;
+  callable: string;
+  params?: any;
+  logger?: Logger;
+}): Promise<any> {
   let redis_client = RedisConnection.getClient();
   let indexer_config = IndexerConfig.getInstance();
   // while (true) {
@@ -52,10 +59,8 @@ export async function callRPCMethod(
         indexer_config.MAXIMUM_RPC_REQUEST_FAILED_TOLERANT_TIMES
     ) {
       const new_rpc_url = setProviderIndex(chainId);
-      logger &&
-        logger.info(
-          `Set network ${chainId} current RPC url to: ${new_rpc_url.connection.url}`,
-        );
+      const message = `Set network ${chainId} current RPC url to: ${new_rpc_url.connection.url}`;
+      logger ? logger.info(message) : console.log(message);
       await redis_client.del(`${chainId}_${callable}_failed_counter`);
     }
 
@@ -63,12 +68,17 @@ export async function callRPCMethod(
   }
 }
 
-export async function callRPCRawMethod(
-  chainId: number,
-  method: string,
-  params?: any[],
-  logger?: Logger,
-): Promise<any> {
+export async function callRPCRawMethod({
+  chainId,
+  method,
+  params,
+  logger,
+}: {
+  chainId: number;
+  method: string;
+  params?: any[];
+  logger?: Logger;
+}): Promise<any> {
   let provider = await getRPCProvider(chainId);
   let redis_client = RedisConnection.getClient();
   let indexer_config = IndexerConfig.getInstance();
@@ -77,7 +87,7 @@ export async function callRPCRawMethod(
     `raw_${chainId}_${method}_failed_counter`,
   );
 
-  console.log(`raw_${chainId}_${method}_failed_counter`, failed_time);
+  // console.log(`raw_${chainId}_${method}_failed_counter`, failed_time);
 
   const instance = axios.create({
     baseURL: provider.connection.url,
@@ -126,10 +136,8 @@ export async function callRPCRawMethod(
         indexer_config.MAXIMUM_RPC_REQUEST_FAILED_TOLERANT_TIMES
     ) {
       const new_rpc_url = setProviderIndex(chainId);
-      logger &&
-        logger.info(
-          `Set network ${chainId} current RPC url to: ${new_rpc_url.connection.url}`,
-        );
+      const message = `Set network ${chainId} current RPC url to: ${new_rpc_url.connection.url}`;
+      logger ? logger.info(message) : console.log(message);
       await redis_client.del(`raw_${chainId}_${method}_failed_counter`);
     }
 

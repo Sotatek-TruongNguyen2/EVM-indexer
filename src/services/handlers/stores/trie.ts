@@ -128,7 +128,9 @@ export const get_user_current_level = async (
 
   if (F1_addresses.length > 0 && F1_addresses.length === F1_levels.length) {
     for (let [index, F1_address] of F1_addresses.entries()) {
-      branch_types[F1_address] += (branch_types[F1_address] || 0) + 1;
+      // Count how many F1 levels already have
+      branch_types[F1_levels[index]] +=
+        (branch_types[F1_levels[index]] || 0) + 1;
       if (F1_levels[index] === UserLevel.UNKNOWN) {
         unknown_branches_staking = new BigNumber(unknown_branches_staking)
           .plus(

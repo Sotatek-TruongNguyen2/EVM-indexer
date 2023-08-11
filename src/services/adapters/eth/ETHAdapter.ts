@@ -4,10 +4,14 @@ import {
   Log,
   BlockWithTransactions,
 } from "@ethersproject/abstract-provider";
+import Piscina from "piscina";
+// import path from "path";
+// import spq from "shuffled-priority-queue";
+
 import { ChainConfig } from "../../../config/chainConfig";
 import { IndexerConfig } from "../../../config/indexer";
 import { getIndexerLogger } from "../../../utils/logger";
-import { callRPCMethod, callRPCRawMethod } from "../../../utils/rpcRequest";
+// import { callRPCMethod, callRPCRawMethod } from "../../../utils/rpcRequest";
 import { RetryConfig } from "../../retry";
 import {
   EthereumBlocks,
@@ -16,12 +20,14 @@ import {
 import { BlockPtr, BlockWithLogs } from "../../../types";
 import { ChainStore } from "../../store/chain_head_store";
 import { TOO_MANY_LOGS_FINGERPRINTS } from "../../errors";
+import { callRPCMethod, callRPCRawMethod } from "../../../utils/rpcRequest";
 
 export class ETHAdapter {
   private _block_batch_size: number;
   private _chain_id: number;
   private _logger: Logger;
   private _chain_store: ChainStore;
+  private _pool: Piscina;
 
   constructor(chain_id: number, chain_store: ChainStore) {
     const indexer_config = IndexerConfig.getInstance();
@@ -31,6 +37,11 @@ export class ETHAdapter {
     const chainConfig = ChainConfig[this.chain_id as number];
 
     this._logger = getIndexerLogger(`${chainConfig.name}_${ETHAdapter.name}`);
+    // this._pool = pool;
+  }
+
+  public get pool(): Piscina {
+    return this._pool;
   }
 
   public get chain_id(): number {
@@ -148,9 +159,24 @@ export class ETHAdapter {
       );
 
       const get_block_hash = (block_number: number) => async () => {
-        let result = await callRPCMethod(this.chain_id, "getBlock", [
-          block_number,
-        ]);
+        // let result = await this.pool.run(
+        //   {
+        //     chainId: this.chain_id,
+        //     callable: "getBlock",
+        //     params: [block_number],
+        //     // logger: this.logger,
+        //   },
+        //   {
+        //     name: "callRPCMethod",
+        //   },
+        // );
+
+        let result = await callRPCMethod({
+          chainId: this.chain_id,
+          callable: "getBlock",
+          params: [block_number],
+          // logger: this.logger,
+        });
 
         return result;
       };
@@ -175,12 +201,22 @@ export class ETHAdapter {
       );
 
       const get_block_hash = (block_hash: string) => async () => {
-        let result = await callRPCRawMethod(
-          this.chain_id,
-          "eth_getBlockByHash",
-          [block_hash, true],
-          this.logger,
-        );
+        // let result = await this.pool.run(
+        //   {
+        //     chainId: this.chain_id,
+        //     method: "eth_getBlockByHash",
+        //     params: [block_hash, true],
+        //     // logger: this.logger,
+        //   },
+        //   { name: "callRPCRawMethod" },
+        // );
+
+        let result = await callRPCRawMethod({
+          chainId: this.chain_id,
+          method: "eth_getBlockByHash",
+          params: [block_hash, true],
+          logger: this.logger,
+        });
 
         return result;
       };
@@ -206,12 +242,22 @@ export class ETHAdapter {
       );
 
       const get_block_hash_with_logs = (block_hash: string) => async () => {
-        let result = (await callRPCRawMethod(
-          this.chain_id,
-          "eth_getBlockByHash",
-          [block_hash, true],
-          this.logger,
-        )) as BlockWithTransactions;
+        // let result = (await this.pool.run(
+        //   {
+        //     chainId: this.chain_id,
+        //     method: "eth_getBlockByHash",
+        //     params: [block_hash, true],
+        //     // logger: this.logger,
+        //   },
+        //   { name: "callRPCRawMethod" },
+        // )) as BlockWithTransactions;
+
+        let result = (await callRPCRawMethod({
+          chainId: this.chain_id,
+          method: "eth_getBlockByHash",
+          params: [block_hash, true],
+          // logger: this.logger,
+        })) as BlockWithTransactions;
 
         let tx_to_sender = new Map();
 
@@ -223,17 +269,29 @@ export class ETHAdapter {
           tx_to_sender.set(tx.hash, { from: tx.from });
         });
 
-        let logs = (await callRPCRawMethod(
-          this.chain_id,
-          "eth_getLogs",
-          [
+        // let logs = (await this.pool.run({
+        //   chainId: this.chain_id,
+        //   method: "eth_getLogs",
+        //   params: [
+        //     {
+        //       fromBlock: result.number,
+        //       toBlock: result.number,
+        //     },
+        //   ],
+        //   // logger: this.logger,
+        // }, { name: "callRPCRawMethod"})) as Log[];
+
+        let logs = (await callRPCRawMethod({
+          chainId: this.chain_id,
+          method: "eth_getLogs",
+          params: [
             {
               fromBlock: result.number,
               toBlock: result.number,
             },
           ],
-          this.logger,
-        )) as Log[];
+          logger: this.logger,
+        })) as Log[];
 
         let logs_with_sender = logs.map((log) => ({
           ...log,

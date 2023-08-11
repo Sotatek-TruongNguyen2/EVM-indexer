@@ -198,9 +198,11 @@ export const save_contract_deployments = async () => {
 
       if (!existing) {
         if (metadata.start_block) {
-          let start_block = await callRPCMethod(metadata.id, "getBlock", [
-            metadata.start_block - 1,
-          ]);
+          let start_block = await callRPCMethod({
+            chainId: metadata.id,
+            callable: "getBlock",
+            params: [metadata.start_block - 1],
+          });
 
           deployment_doc.set("latest_ethereum_block_hash", start_block.hash);
           deployment_doc.set(

@@ -11,12 +11,14 @@
     "noImplicitAny": false,
     "rootDir": "./src",
     "outDir": "./dist",
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "declaration": true,
+		"allowSyntheticDefaultImports": true
   },
   "exclude": [
     "./src/blockchain/abi"
   ],
    "include": [
     "src/**/*"
-  ]
+  ],
 }

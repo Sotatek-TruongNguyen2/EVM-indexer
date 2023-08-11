@@ -1,6 +1,6 @@
-import Redis, { RedisOptions } from 'ioredis';
+import Redis, { RedisOptions } from "ioredis";
 
-import { getDefaultRedisConfig } from '../config/redis';
+import { getDefaultRedisConfig } from "../config/redis";
 
 export class RedisConnection {
   static _CLIENT: Redis;
@@ -13,14 +13,13 @@ export class RedisConnection {
           ? optionsOverride
           : redisConfig.options;
 
-        console.log(redisConfig, redisOptions);
         this._CLIENT = new Redis(
           redisConfig.port,
           redisConfig.host,
           redisOptions,
         );
       } catch (err) {
-        console.log('[REDIS][ERROR] ', err);
+        console.log("[REDIS][ERROR] ", err);
       }
     }
 

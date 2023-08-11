@@ -15,6 +15,9 @@ export interface IUserModel extends Document {
   interest_rate: number;
   global_interest_rate: number;
   accumulative_index: number;
+  accumulative_index_by_branch: Map<string, number>;
+  disable_branches: Map<string, boolean>;
+  global_interest_rate_enabled: boolean;
   last_accrued_timestamp: number;
   total_global_reward: string;
 }
@@ -79,10 +82,25 @@ export const UserModelSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
+  global_interest_rate_enabled: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   accumulative_index: {
     type: Number,
     required: true,
     default: 0,
+  },
+  disable_branches: {
+    type: Map,
+    of: Boolean,
+    default: {},
+  },
+  accumulative_index_by_branch: {
+    type: Map,
+    of: Number,
+    default: {},
   },
   last_accrued_timestamp: {
     type: Number,

@@ -3,9 +3,11 @@ import { ETHAdapter } from "../../adapters";
 import { IndexerConfig } from "../../../config/indexer";
 import { getIndexerLogger } from "../../../utils/logger";
 import { ChainConfig } from "../../../config/chainConfig";
-import { callRPCMethod } from "../../../utils/rpcRequest";
+// import { callRPCMethod } from "../../../utils/rpcRequest";
 import { ChainStore } from "../../store/chain_head_store";
 import { LogCode } from "../../store/types";
+// import Piscina from "piscina";
+import { callRPCMethod } from "../../../utils/rpcRequest";
 
 export class BlockIngestor {
   private _logger: Logger;
@@ -14,11 +16,13 @@ export class BlockIngestor {
   private _polling_interval: number;
   private _adapter: ETHAdapter;
   private _chain_store: ChainStore;
+  // private _pool: Piscina;
 
   constructor(chain_id: number, chain_store: ChainStore) {
     const indexer_config = IndexerConfig.getInstance();
 
     this._chain_store = chain_store;
+    // this._pool = pool;
     this._adapter = new ETHAdapter(chain_id, this.chain_store);
     this._polling_interval = indexer_config.INGESTOR_POLLING_INTERVAL;
     this._ancestor_count = indexer_config.REORG_THRESHOLD;
@@ -28,6 +32,10 @@ export class BlockIngestor {
       this._logger = getIndexerLogger(`${chainConfig.name}_chain_head_ptr`);
     }
   }
+
+  // public get pool(): Piscina {
+  //   return this._pool;
+  // }
 
   public get chain_store(): ChainStore {
     return this._chain_store;
@@ -64,13 +72,38 @@ export class BlockIngestor {
   }
 
   private async do_ingest_block() {
+    // const pool = new Piscina({
+    //   filename: path.resolve(__dirname, "../", "../", `./utils/rpcRequest.ts`),
+    //   // In dev or test, we register ts-node using nodejs arguments
+    //   execArgv: isDevOrTest ? ["-r", "ts-node/register"] : undefined,
+    //   maxThreads: 4,
+    //   minThreads: 2,
+    //   taskQueue: new PiscinaPriorityQueue(),
+    // });
     try {
-      let latest_block = await callRPCMethod(this.chain_id, "getBlock", [
-        "latest",
-      ]);
+      let latest_block = await callRPCMethod({
+        chainId: this.chain_id,
+        callable: "getBlock",
+        params: ["latest"],
+        // logger: this.logger,
+      });
+
+      // let latest_block = await this.pool.run(
+      //   {
+      //     chainId: this.chain_id,
+      //     callable: "getBlock",
+      //     params: ["latest"],
+      //     // logger: this.logger,
+      //   },
+      //   {
+      //     name: "callRPCMethod",
+      //   },
+      // );
+
+      // console.log("latest block:", latest_block);
 
       let chain_head_ptr = await this.chain_store.chain_head_ptr();
-      console.log("chain_head_ptr: ", chain_head_ptr);
+      // console.log("chain_head_ptr: ", chain_head_ptr);
 
       if (chain_head_ptr) {
         if (chain_head_ptr.number == latest_block.number) {
@@ -135,3 +168,16 @@ export class BlockIngestor {
     this.do_poll();
   }
 }
+
+// export async function build_block_ingestor({
+//   chain_id,
+//   chain_store,
+// }: // pool,
+// {
+//   chain_id: number;
+//   chain_store: ChainStore;
+//   // pool: Piscina;
+// }) {
+//   // const block_ingestor = new BlockIngestor(chain_id, chain_store);
+//   // block_ingestor.start();
+// }
