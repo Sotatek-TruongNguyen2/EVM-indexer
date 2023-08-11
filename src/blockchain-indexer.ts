@@ -7,7 +7,7 @@ import { ChainStore } from "./services/store/chain_head_store";
 import { BlockIngestor } from "./services/block_ingestors/eth";
 // import Piscina from "piscina";
 import path from "path";
-import PiscinaPriorityQueue from "piscina-priority-queue";
+// import PiscinaPriorityQueue from "piscina-priority-queue";
 
 export class BlockchainIndexer {
   public async start() {
