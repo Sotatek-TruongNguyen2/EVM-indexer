@@ -25,7 +25,6 @@
     "mongoose": "^6.10.0",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.2",
-    "piscina": "^4.1.0",
     "piscina-priority-queue": "^3.0.0",
     "pubsub-js": "^1.9.4",
     "s3-streamlogger": "^1.9.0",

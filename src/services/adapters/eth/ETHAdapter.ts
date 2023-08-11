@@ -4,7 +4,7 @@ import {
   Log,
   BlockWithTransactions,
 } from "@ethersproject/abstract-provider";
-import Piscina from "piscina";
+// import Piscina from "piscina";
 // import path from "path";
 // import spq from "shuffled-priority-queue";
 
@@ -27,7 +27,7 @@ export class ETHAdapter {
   private _chain_id: number;
   private _logger: Logger;
   private _chain_store: ChainStore;
-  private _pool: Piscina;
+  // private _pool: Piscina;
 
   constructor(chain_id: number, chain_store: ChainStore) {
     const indexer_config = IndexerConfig.getInstance();
@@ -40,9 +40,9 @@ export class ETHAdapter {
     // this._pool = pool;
   }
 
-  public get pool(): Piscina {
-    return this._pool;
-  }
+  // public get pool(): Piscina {
+  //   return this._pool;
+  // }
 
   public get chain_id(): number {
     return this._chain_id;

@@ -2,7 +2,7 @@ import PubSub from "pubsub-js";
 import { BigNumber } from "ethers";
 import { Log } from "@ethersproject/abstract-provider";
 
-import Piscina from "piscina";
+// import Piscina from "piscina";
 
 import { ChainConfig } from "../../../config/chainConfig";
 import { getIndexerLogger } from "../../../utils/logger";
@@ -56,7 +56,7 @@ export class IndexForward {
   private _chain_store: ChainStore;
   private _deployment_latest_block: BlockPtr | undefined;
 
-  private _pool: Piscina;
+  // private _pool: Piscina;
   private _logger: Logger;
   private _deployment: IContractDeployment;
   private _adapter: ETHAdapter;
@@ -65,7 +65,7 @@ export class IndexForward {
   constructor(
     deployment: IContractDeployment,
     chain_store: ChainStore,
-    pool: Piscina,
+    // pool: Piscina,
   ) {
     const indexer_config = IndexerConfig.getInstance();
 
@@ -80,7 +80,7 @@ export class IndexForward {
     this._block_polling_interval = indexer_config.NEW_BLOCK_POLLING_INTERVAL;
     this._deployment = deployment;
 
-    this._pool = pool;
+    // this._pool = pool;
     this._adapter = new ETHAdapter(
       deployment.chain_id,
       this.chain_store,
@@ -124,9 +124,9 @@ export class IndexForward {
     this._chain_head_emitter = chain_head_emitter;
   }
 
-  public get pool(): Piscina {
-    return this._pool;
-  }
+  // public get pool(): Piscina {
+  //   return this._pool;
+  // }
 
   public get chain_head_emitter(): ChangeStream {
     return this._chain_head_emitter;
