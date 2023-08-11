@@ -38,7 +38,7 @@ export class BlockchainIndexer {
       block_ingestor.start();
 
       for (let deployment of deployments) {
-        const indexer = new EthereumIndexForward(deployment, chain_store, pool);
+        const indexer = new EthereumIndexForward(deployment, chain_store);
         indexer.start();
       }
     } catch (err) {
