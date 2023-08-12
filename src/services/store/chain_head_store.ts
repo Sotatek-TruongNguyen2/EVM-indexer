@@ -97,6 +97,7 @@ export class ChainStore {
         block_number: -1,
       })
       .limit(1)
+      .allowDiskUse(true)
       .exec();
 
     if (chain_head_candidates.length) {
@@ -222,66 +223,71 @@ export class ChainStore {
       }
     }
 
-    const related_blocks = await EthereumBlocks.aggregate([
-      {
-        $match: {
-          block_hash: {
-            $eq: block_ptr.hash,
+    const related_blocks = await EthereumBlocks.aggregate(
+      [
+        {
+          $match: {
+            block_hash: {
+              $eq: block_ptr.hash,
+            },
           },
         },
-      },
-      {
-        $graphLookup: {
-          from: "ethereumblocks",
-          connectFromField: "parent_hash",
-          connectToField: "block_hash",
-          as: "chain",
-          startWith: "$block_hash",
-          maxDepth: offset,
-          restrictSearchWithMatch: {
-            $and: [{ chain_id: this.chain_id }],
+        {
+          $graphLookup: {
+            from: "ethereumblocks",
+            connectFromField: "parent_hash",
+            connectToField: "block_hash",
+            as: "chain",
+            startWith: "$block_hash",
+            maxDepth: offset,
+            restrictSearchWithMatch: {
+              $and: [{ chain_id: this.chain_id }],
+            },
           },
         },
-      },
-      {
-        $unwind: "$chain",
-      },
-      {
-        $project: {
-          _id: 0,
-          chain: 1,
+        {
+          $unwind: "$chain",
         },
-      },
-      {
-        $group: {
-          _id: "$chain._id",
-          parent_hash: {
-            $first: "$chain.parent_hash",
-          },
-          block_number: {
-            $first: "$chain.block_number",
-          },
-          block_hash: {
-            $first: "$chain.block_hash",
-          },
-          chain_id: {
-            $first: "$chain.chain_id",
-          },
-          network_name: {
-            $first: "$chain.network_name",
-          },
-          finalized: {
-            $first: "$chain.finalized",
-          },
-          data: {
-            $first: "$chain.data",
+        {
+          $project: {
+            _id: 0,
+            chain: 1,
           },
         },
-      },
+        {
+          $group: {
+            _id: "$chain._id",
+            parent_hash: {
+              $first: "$chain.parent_hash",
+            },
+            block_number: {
+              $first: "$chain.block_number",
+            },
+            block_hash: {
+              $first: "$chain.block_hash",
+            },
+            chain_id: {
+              $first: "$chain.chain_id",
+            },
+            network_name: {
+              $first: "$chain.network_name",
+            },
+            finalized: {
+              $first: "$chain.finalized",
+            },
+            data: {
+              $first: "$chain.data",
+            },
+          },
+        },
+        {
+          $sort: { block_number: 1 },
+        },
+      ],
       {
-        $sort: { block_number: 1 },
+        allowDiskUse: true,
       },
-    ]);
+    );
 
     if (related_blocks.length - 1 === offset) {
       return related_blocks[0];
@@ -369,60 +375,65 @@ export class ChainStore {
     first_block: number,
     max_depth: number,
   ): Promise<string | undefined> {
-    const related_blocks = await EthereumBlocks.aggregate([
-      {
-        $match: {
-          block_hash: {
-            $eq: chain_head_candidate_ptr,
+    const related_blocks = await EthereumBlocks.aggregate(
+      [
+        {
+          $match: {
+            block_hash: {
+              $eq: chain_head_candidate_ptr,
+            },
           },
         },
-      },
-      {
-        $graphLookup: {
-          from: "ethereumblocks",
-          connectFromField: "parent_hash",
-          connectToField: "block_hash",
-          as: "chain",
-          startWith: "$block_hash",
-          maxDepth: max_depth,
-          restrictSearchWithMatch: {
-            $and: [{ chain_id: this.chain_id }],
+        {
+          $graphLookup: {
+            from: "ethereumblocks",
+            connectFromField: "parent_hash",
+            connectToField: "block_hash",
+            as: "chain",
+            startWith: "$block_hash",
+            maxDepth: max_depth,
+            restrictSearchWithMatch: {
+              $and: [{ chain_id: this.chain_id }],
+            },
           },
         },
-      },
-      {
-        $unwind: "$chain",
-      },
-      {
-        $project: {
-          _id: 0,
-          chain: 1,
+        {
+          $unwind: "$chain",
         },
-      },
-      {
-        $group: {
-          _id: "$chain._id",
-          parent_hash: {
-            $first: "$chain.parent_hash",
-          },
-          block_number: {
-            $first: "$chain.block_number",
-          },
-          block_hash: {
-            $first: "$chain.block_hash",
-          },
-          chain_id: {
-            $first: "$chain.chain_id",
-          },
-          network_name: {
-            $first: "$chain.network_name",
+        {
+          $project: {
+            _id: 0,
+            chain: 1,
           },
         },
-      },
+        {
+          $group: {
+            _id: "$chain._id",
+            parent_hash: {
+              $first: "$chain.parent_hash",
+            },
+            block_number: {
+              $first: "$chain.block_number",
+            },
+            block_hash: {
+              $first: "$chain.block_hash",
+            },
+            chain_id: {
+              $first: "$chain.chain_id",
+            },
+            network_name: {
+              $first: "$chain.network_name",
+            },
+          },
+        },
+        {
+          $sort: { block_number: 1 },
+        },
+      ],
       {
-        $sort: { block_number: 1 },
+        allowDiskUse: true,
       },
-    ]);
+    );
 
     if (related_blocks[0].block_number > first_block) {
       return related_blocks[0].parent_hash;

@@ -28,6 +28,7 @@ const EthereumBlockSchema = new mongoose.Schema({
   block_number: {
     type: Number,
     required: true,
+    index: true,
   },
   timestamp: {
     type: Number,
