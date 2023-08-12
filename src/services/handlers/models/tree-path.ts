@@ -11,10 +11,12 @@ export const UserTreePathSchema = new mongoose.Schema({
   ancestor: {
     type: String,
     ref: "User",
+    index: true,
   },
   descendant: {
     type: String,
     ref: "User",
+    index: true,
   },
   path_length: {
     type: Number,

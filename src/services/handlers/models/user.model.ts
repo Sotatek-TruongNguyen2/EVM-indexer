@@ -42,9 +42,9 @@ export const UserModelSchema = new mongoose.Schema({
   _id: {
     type: String,
     required: true,
-    index: {
-      unique: true,
-    },
+    // index: {
+    //   unique: true,
+    // },
   },
   // address: {
   //   type: String,
