@@ -44,6 +44,7 @@ export const user_deposit_handler: ILogHandler = async (logger, log_params) => {
       // true,
     );
 
+    // Update all user ancestor, descendant in the referral Tree
     await update_user_branches(
       current_user,
       deposit_amount,

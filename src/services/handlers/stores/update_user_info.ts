@@ -21,15 +21,26 @@ import {
 } from "../constants/user";
 import { calculate_total_global_rewards } from "../../../helpers/calculate_total_global_rewards";
 
-export const retrieve_user_referral_descendants = async (
+export const retrieve_user_descendants_by_addr = async (
   user_addr: string,
 ): Promise<IUserModel[]> => {
   const descendants = await UserTreePath.aggregate([
     {
       $match: {
-        ancestor: {
-          $eq: user_addr,
-        },
+        $and: [
+          {
+            ancestor: user_addr,
+          },
+          {
+            $and: [
+              {
+                path_length: {
+                  $gt: 0,
+                },
+              },
+            ],
+          },
+        ],
       },
     },
     {
@@ -40,11 +51,18 @@ export const retrieve_user_referral_descendants = async (
         as: "descendant",
       },
     },
+    {
+      $unwind: "$descendant",
+    },
   ]);
 
   return descendants;
 };
 
+/// @title Find User by user ethereum address
+/// @author Arthur Nguyen
+/// @notice This function are currently implemented for retrieving user information in the db
+/// @dev I'm also using Patricia Trie for faster query user level
 export const retrieve_user = async (user_addr: string): Promise<IUserModel> => {
   let current_user = await User.findOne({
     _id: {
@@ -52,6 +70,7 @@ export const retrieve_user = async (user_addr: string): Promise<IUserModel> => {
     },
   });
 
+  // @dev: Just in case current user doesn't exists in the database, Create this user in the db
   if (!current_user) {
     let inserted_user = new User({
       _id: user_addr,
@@ -62,6 +81,7 @@ export const retrieve_user = async (user_addr: string): Promise<IUserModel> => {
 
     current_user = await inserted_user.save();
 
+    // @dev: Insert user is both descendant, ancestor to themselves at level 0 (DEFAULT)
     await UserTreePath.updateOne(
       {
         $and: [{ ancestor: user_addr }, { descendant: user_addr }],
@@ -77,31 +97,40 @@ export const retrieve_user = async (user_addr: string): Promise<IUserModel> => {
       },
     );
 
+    // @dev: Insert user data into Patricia Trie
     await upsert_user_data(user_addr);
   }
 
   return current_user;
 };
 
+/// @title Update user info when we receive 'Deposit' event of that user
+/// @author Arthur Nguyen
+/// @dev The `old` param will tell this function to return newly updated user data or the old one
 export const update_user_info = async (
   user_address: string,
   amount: string,
-  referralBy: string,
+  referBy: string,
   old?: boolean,
   withdraw?: boolean,
 ): Promise<IUserModel> => {
+  //@dev Retrieve user current info by user's address
   let current_user = await retrieve_user(user_address);
-  let old_current_user = Object.assign({}, current_user);
+  let old_current_user = current_user.toObject();
 
+  //@dev Check if user join the staking program by referral. If yes, create
+  // the referrer in the db
   if (
     current_user.referralBy === ethers.constants.AddressZero &&
-    referralBy != ethers.constants.AddressZero
+    referBy != ethers.constants.AddressZero
   ) {
-    await retrieve_user(referralBy);
-    await update_referral_tree_path(user_address, referralBy);
-    current_user.referralBy = referralBy;
+    await retrieve_user(referBy);
+    await update_referral_tree_path(user_address, referBy);
+    //
+    current_user.referralBy = referBy;
   }
 
+  // Update current deposit amount
   const updated_current_deposit = withdraw
     ? new BigNumber(current_user.current_deposit).minus(
         new BigNumber(amount).div(1e18),
@@ -114,6 +143,7 @@ export const update_user_info = async (
     updated_current_deposit.lte(0) ? new BigNumber(0) : updated_current_deposit
   ).toString();
 
+  // @dev: check the current staking interest of user
   Object.keys(UserStakingInterest).map((staking_range) => {
     const [from, to] = staking_range.split("-");
 
@@ -127,17 +157,25 @@ export const update_user_info = async (
     }
   });
 
+  console.log(old_current_user, current_user);
+  // Update user into the database
   await current_user.save();
 
-  return old ? (old_current_user as any)._doc : current_user;
+  // Return the newly updated user or the old one.
+  return old ? (old_current_user as any) : current_user;
 };
 
+/// @title Update user Referral Tree Path
+/// @author Arthur Nguyen
+/// @dev (I'm using Closure Table Mechanism for storing this data). Cuz the Referral Depth Level is Unknown
 export const update_referral_tree_path = async (
   user_addr: string,
   referrer: string,
 ) => {
   let ancestor_descendants: Document[] = [];
 
+  // Find all ancestor of the referrer because if an user is descendant to the referrer,
+  // it also be descendant to referrer's ancestor as well.
   const referrer_ancestors = await UserTreePath.find({
     descendant: {
       $eq: referrer,
@@ -155,14 +193,18 @@ export const update_referral_tree_path = async (
     );
   }
 
+  // Insert all updated into the db
   await UserTreePath.insertMany(ancestor_descendants);
 };
 
+/// @title Update Referral Tree due to user's current deposit has changed.
+/// @author Arthur Nguyen
 export const update_user_branches = async (
   user: IUserModel, // Old user details
   amount: string,
   timestamp: number,
 ) => {
+  // @dev: Find all user's ancestor by user._id (user's address)
   let user_ancestors = await UserTreePath.aggregate([
     {
       $match: {
@@ -177,11 +219,6 @@ export const update_user_branches = async (
                   $gte: 0,
                 },
               },
-              // {
-              //   path_length: {
-              //     $lte: 7,
-              //   },
-              // },
             ],
           },
         ],
@@ -205,16 +242,28 @@ export const update_user_branches = async (
     },
   ]);
 
+  // Get User Data Trie (Patricia Trie) For faster query
   let user_data_trie = await get_user_data_trie();
 
+  // Check if there're any ancestor exists.
+  // @dev: user_ancestors.length > 1 cuz the query will also returns the default user tree path of that user
+  // (user's ancestor and descendant is user themselves)
   if (user_ancestors.length && user_ancestors.length > 1 && user_data_trie) {
-    // Get current newest user details
+    //@dev Get newest current user details cuz the query above return included the default case
     let newest_current_user = user_ancestors[0].ancestor;
+
+    console.log(
+      "111111: ",
+      user.interest_rate,
+      user.current_deposit,
+      newest_current_user.interest_rate,
+      newest_current_user.current_deposit,
+    );
 
     let trie = user_data_trie.trie;
     let users_level_after_modify = {};
 
-    //  Need to slice the first element to remove current user from list of ancestors
+    //@dev  Need to slice the first element to remove current user from list of ancestors
     user_ancestors = user_ancestors.slice(1);
 
     // Insert current level and staking interest rate into user data trie for further query
@@ -224,6 +273,7 @@ export const update_user_branches = async (
       total_deposit_amount: newest_current_user.current_deposit,
     });
 
+    //@dev: Loop through all user's ancestor entries
     for (let [index, user_ancestor] of user_ancestors.entries()) {
       let { ancestor, path_length } = user_ancestor;
       let {
@@ -232,21 +282,22 @@ export const update_user_branches = async (
         last_accrued_timestamp,
         total_global_reward,
         global_interest_rate,
-        global_interest_rate_enabled,
+        global_interest_rate_disabled,
         accumulative_index_by_branch,
         disable_branches,
       } = ancestor;
 
-      //
+      //@dev: Find F1_address of the current ancestor
       let F1_branch_address =
         path_length > 1 ? user_ancestors[index - 1].ancestor._id : user._id;
 
+      //@dev: Increase total deposit amount fo that branch
       let current_branch_staking = branches[F1_branch_address] || "0";
       branches[F1_branch_address] = new BigNumber(current_branch_staking)
         .plus(new BigNumber(amount).div(1e18))
         .toString();
 
-      // Calculate ancestor current global rewards
+      //@dev Calculate ancestor current global rewards from the last time accumulated till the event timestamp
       let {
         total_global_reward: updated_total_global_reward,
         last_accrued_timestamp: updated_last_accrued_timestamp,
@@ -255,7 +306,7 @@ export const update_user_branches = async (
         total_global_reward,
         // Check if all branch has been disabled,
         // then global_interest_rate equals 0, otherwise will be the default
-        global_interest_rate_enabled === true ? 0 : global_interest_rate,
+        global_interest_rate_disabled === true ? 0 : global_interest_rate,
         last_accrued_timestamp,
         timestamp,
       );
@@ -266,160 +317,60 @@ export const update_user_branches = async (
         branches,
       );
 
+      // @dev: Retrieve all ancestor descendants
+      const ancestor_descendants = await retrieve_user_descendants_by_addr(
+        ancestor._id,
+      );
+
+      // @dev: Update passing level reward if possible
+      updated_total_global_reward = await try_distribute_level_passing_rewards(
+        ancestor_descendants,
+        current_level,
+        new BigNumber(updated_total_global_reward),
+        accumulative_index,
+      );
+
       let { updated_accumulative_index, accumulative_index_diff } =
         await try_update_accumulative_index(
-          ancestor,
           user,
           newest_current_user,
           accumulative_index,
-          current_level,
         );
 
       // Update Accumulative index diff for each branch
       accumulative_index_by_branch[F1_branch_address] = new BigNumber(
         accumulative_index_by_branch[F1_branch_address] || 0,
-      ).plus(accumulative_index_diff);
+      )
+        .plus(accumulative_index_diff)
+        .toNumber();
 
+      // @dev: Check breaking rules of all ancestor's branches
       const {
         updated_accumulative_index: new_updated_accumulative_index,
         disable_branches: updated_disable_branches,
-        global_interest_rate_enabled: updated_global_interest_rate_enabled,
+        global_interest_rate_disabled: updated_global_interest_rate_disabled,
       } = await try_check_break_branch_rules(
-        ancestor._id,
+        ancestor_descendants,
         current_level,
         new BigNumber(accumulative_index_diff),
         accumulative_index_by_branch,
-        new BigNumber(accumulative_index),
+        new BigNumber(updated_accumulative_index), // Use the latest accumulative index
         disable_branches,
       );
 
-      global_interest_rate_enabled = updated_global_interest_rate_enabled;
+      global_interest_rate_disabled = updated_global_interest_rate_disabled;
       updated_accumulative_index = new_updated_accumulative_index;
       disable_branches = updated_disable_branches;
 
-      // console.log(
-      //   "updated_accumulative_index: ",
-      //   updated_accumulative_index.toString(),
-      // );
-
       // Insert current level and staking interest rate into user data trie for further query
       trie = upsert_new_node(ancestor._id, trie, {
-        current_level: current_level,
+        current_level,
         // interest_rate: ancestor.interest_rate,
         // total_deposit_amount: ancestor,
       });
 
       let user_global_referral_interest_rate =
         UserLevelGlobalInterest[current_level];
-
-      // Update if the user current level is currently passing their ancestor level
-      // @dev: current user in here is the current ancestor in the loop
-      if (current_level !== ancestor.level) {
-        console.log("WE IN HERE");
-        // Find all current user ancestors
-        let ancestor_ancestors = await UserTreePath.aggregate([
-          {
-            $match: {
-              $and: [
-                {
-                  descendant: ancestor._id,
-                },
-                {
-                  $and: [
-                    {
-                      path_length: {
-                        $gt: 0,
-                      },
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-          {
-            $lookup: {
-              from: "users",
-              localField: "ancestor",
-              foreignField: "_id",
-              as: "ancestor",
-            },
-          },
-          {
-            $unwind: "$ancestor",
-          },
-        ]);
-
-        for (let ancestor_ancestor of ancestor_ancestors) {
-          let temp_ancestor_ancestor = ancestor_ancestor.ancestor;
-
-          // Find any ancestor that has level equals current user level
-          if (temp_ancestor_ancestor.level === current_level) {
-            // Calculate passing reword
-            let {
-              total_global_reward:
-                ancestor_ancestor_updated_total_global_reward,
-              last_accrued_timestamp:
-                ancestor_ancestor_updated_last_accrued_timestamp,
-            } = calculate_total_global_rewards(
-              temp_ancestor_ancestor.accumulative_index,
-              temp_ancestor_ancestor.total_global_reward,
-              temp_ancestor_ancestor.global_interest_rate,
-              temp_ancestor_ancestor.last_accrued_timestamp,
-              timestamp,
-            );
-
-            // @dev: Because the ancestor'ancestor
-            users_level_after_modify[temp_ancestor_ancestor._id] = {
-              global_interest_rate: temp_ancestor_ancestor.global_interest_rate,
-              current_level: temp_ancestor_ancestor.current_level,
-              branches: temp_ancestor_ancestor.branches,
-              last_accrued_timestamp:
-                ancestor_ancestor_updated_last_accrued_timestamp,
-              total_global_reward:
-                ancestor_ancestor_updated_total_global_reward,
-              accumulative_index: temp_ancestor_ancestor.accumulative_index,
-              disable_branches: temp_ancestor_ancestor.disable_branches,
-              accumulative_index_by_branch:
-                temp_ancestor_ancestor.accumulative_index_by_branch,
-              global_interest_rate_enabled:
-                temp_ancestor_ancestor.global_interest_rate_enabled,
-            };
-          }
-
-          // Check if current user level is passed their ancestor level. Reward 1%
-          if (
-            UserLevelGlobalInterest[current_level] >
-            UserLevelGlobalInterest[temp_ancestor_ancestor.level]
-          ) {
-            // Update ancestor latest reward
-            let ancestor_ancestor_updated_total_global_reward = new BigNumber(
-              temp_ancestor_ancestor.total_global_reward,
-            )
-              .plus(
-                new BigNumber(temp_ancestor_ancestor.accumulative_index)
-                  .multipliedBy(USER_LEVEL_PASSED_INTEREST)
-                  .div(10000),
-              )
-              .toString();
-
-            users_level_after_modify[temp_ancestor_ancestor._id] = {
-              global_interest_rate: temp_ancestor_ancestor.global_interest_rate,
-              current_level: temp_ancestor_ancestor.current_level,
-              branches: temp_ancestor_ancestor.branches,
-              last_accrued_timestamp:
-                temp_ancestor_ancestor.last_accrued_timestamp,
-              total_global_reward:
-                ancestor_ancestor_updated_total_global_reward,
-              accumulative_index: temp_ancestor_ancestor.accumulative_index,
-              disable_branches: temp_ancestor_ancestor.disable_branches,
-              accumulative_index_by_branch:
-                temp_ancestor_ancestor.accumulative_index_by_branch,
-              global_interest_rate_enabled:
-                temp_ancestor_ancestor.global_interest_rate_enabled,
-            };
-          }
-        }
-      }
 
       users_level_after_modify[ancestor._id] = {
         global_interest_rate: user_global_referral_interest_rate,
@@ -430,7 +381,7 @@ export const update_user_branches = async (
         accumulative_index: updated_accumulative_index.toFixed(),
         disable_branches,
         accumulative_index_by_branch,
-        global_interest_rate_enabled,
+        global_interest_rate_disabled,
       };
     }
 
@@ -481,63 +432,57 @@ export const update_user_branches = async (
   }
 };
 
+async function try_distribute_level_passing_rewards(
+  ancestor_descendants: any[],
+  ancestor_level: UserLevel,
+  ancestor_total_global_reward: BigNumber,
+  accumulative_index: BigNumber,
+) {
+  let ancestor_updated_total_global_reward = ancestor_total_global_reward;
+  for (let ancestor_descendant of ancestor_descendants) {
+    let descendant = ancestor_descendant.descendant;
+    if (
+      UserLevelGlobalInterest[descendant.level] >
+      UserLevelGlobalInterest[ancestor_level]
+    ) {
+      // Update ancestor latest reward
+      ancestor_updated_total_global_reward = new BigNumber(
+        ancestor_updated_total_global_reward,
+      ).plus(
+        new BigNumber(accumulative_index)
+          .multipliedBy(USER_LEVEL_PASSED_INTEREST)
+          .div(10000),
+      );
+    }
+  }
+
+  return ancestor_updated_total_global_reward.toString();
+}
+
 async function try_check_break_branch_rules(
-  ancestor_address: string,
+  ancestor_descendants: any[],
   ancestor_level: UserLevel,
   accumulative_index_diff: BigNumber,
-  accumulative_index_by_branch: BigNumber,
+  accumulative_index_by_branch: Map<string, number>,
   accumulative_index: BigNumber,
   disable_branches: Map<string, boolean>,
 ): Promise<{
-  global_interest_rate_enabled: boolean;
+  global_interest_rate_disabled: boolean;
   updated_accumulative_index: BigNumber;
   disable_branches: Map<string, boolean>;
 }> {
-  // Retrieve all child to see if we have any child that has equal level
-  let ancestor_descendants = await UserTreePath.aggregate([
-    {
-      $match: {
-        $and: [
-          {
-            ancestor: ancestor_address,
-          },
-          {
-            $and: [
-              {
-                path_length: {
-                  $gt: 0,
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "descendant",
-        foreignField: "_id",
-        as: "descendant",
-      },
-    },
-    {
-      $unwind: "$descendant",
-    },
-    // {
-    //   $sort: {
-    //     path_length: 1,
-    //   },
-    // },
-  ]);
-
+  //@dev: This mapping will be used to map descendants to their data (
+  // depth level + referBy) in user referral tree by path_length
   let descendant_to_path_length = {};
+  //@dev: This mapping will be used to mark if any branches has violated the rule
   let ancestor_F1_address_branch_break_rule = {};
-  let global_interest_rate_enabled = false;
+  //@dev: Global interest will be disabled if all branches has violated rules
+  let global_interest_rate_disabled = false;
   // Total ancestor F1s
   let total_F1s = 0;
 
   for (let ancestor_descendant of ancestor_descendants) {
+    // Get all ancestor F1s
     if (ancestor_descendant.path_length === 1) {
       total_F1s++;
     }
@@ -548,6 +493,7 @@ async function try_check_break_branch_rules(
     };
   }
 
+  // Loop through all ancestor descendants to find if any descendant violate the rule
   for (let [index, ancestor_descendant] of ancestor_descendants.entries()) {
     let descendant = ancestor_descendant.descendant;
     let F1_address = descendant._id;
@@ -562,6 +508,8 @@ async function try_check_break_branch_rules(
       F1_address = referralBy;
     }
 
+    //@dev: Find out if in branches that has an user whose level
+    // more than the ancestor -> disable that branch
     if (
       UserLevelGlobalInterest[descendant.level] >=
       UserLevelGlobalInterest[ancestor_level]
@@ -572,19 +520,24 @@ async function try_check_break_branch_rules(
 
   let updated_accumulative_index;
 
+  //@dev: Looping through all F1 that has break the rule
   Object.keys(ancestor_F1_address_branch_break_rule).map((F1_address) => {
     const break_rule = ancestor_F1_address_branch_break_rule[F1_address];
+    //@dev: If the branch hasn't violated but now violated -> list it to disable branches
+    // subtract it from accumulative index as well
     if (!disable_branches[F1_address] && break_rule) {
       disable_branches[F1_address] = true;
       updated_accumulative_index = accumulative_index.minus(
-        accumulative_index_by_branch[F1_address],
+        new BigNumber(accumulative_index_by_branch[F1_address]),
       );
     }
 
     if (disable_branches[F1_address] && !break_rule) {
       disable_branches[F1_address] = false;
       updated_accumulative_index = accumulative_index.plus(
-        accumulative_index_by_branch[F1_address],
+        new BigNumber(accumulative_index_by_branch[F1_address]).minus(
+          accumulative_index_diff,
+        ),
       );
     }
 
@@ -598,22 +551,20 @@ async function try_check_break_branch_rules(
 
   // Check if all F1 branch has been disabled
   if (Object.keys(ancestor_F1_address_branch_break_rule).length === total_F1s) {
-    global_interest_rate_enabled = true;
+    global_interest_rate_disabled = true;
   }
 
   return {
-    global_interest_rate_enabled,
+    global_interest_rate_disabled,
     updated_accumulative_index,
     disable_branches,
   };
 }
 
 async function try_update_accumulative_index(
-  ancestor,
   old_user,
   newest_current_user,
   accumulative_index,
-  current_level: UserLevel,
 ): Promise<{
   updated_accumulative_index: BigNumber;
   accumulative_index_diff: BigNumber;
@@ -621,73 +572,22 @@ async function try_update_accumulative_index(
   let updated_accumulative_index;
   let accumulative_index_diff;
 
-  if (
-    ancestor.level === UserLevel.UNKNOWN &&
-    current_level != UserLevel.UNKNOWN
-  ) {
-    let ancestor_descendants = await UserTreePath.aggregate([
-      {
-        $match: {
-          $and: [
-            {
-              ancestor: ancestor._id,
-            },
-            {
-              $and: [
-                {
-                  path_length: {
-                    $gt: 0,
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "descendant",
-          foreignField: "_id",
-          as: "descendant",
-        },
-      },
-      {
-        $unwind: "$descendant",
-      },
-    ]);
-
-    let temp_accumulative_index = new BigNumber(0);
-
-    for (let ancestor_descendant of ancestor_descendants) {
-      let descendant = ancestor_descendant.descendant;
-      temp_accumulative_index = temp_accumulative_index.plus(
-        new BigNumber(descendant.current_deposit)
-          .multipliedBy(descendant.interest_rate)
-          .div(BASIS_POINT),
-      );
-    }
-
-    updated_accumulative_index = temp_accumulative_index;
-    accumulative_index_diff = temp_accumulative_index;
-  } else {
-    accumulative_index_diff = new BigNumber(newest_current_user.current_deposit)
-      .multipliedBy(newest_current_user.interest_rate)
-      .div(BASIS_POINT)
-      .minus(
-        new BigNumber(old_user.current_deposit)
-          .multipliedBy(new BigNumber(old_user.interest_rate))
-          .div(BASIS_POINT),
-      );
-
-    updated_accumulative_index = new BigNumber(accumulative_index).plus(
-      accumulative_index_diff,
-      // .div(SECONDS_IN_YEAR_IN_MILLISECONDS),
+  accumulative_index_diff = new BigNumber(newest_current_user.current_deposit)
+    .multipliedBy(newest_current_user.interest_rate)
+    .div(BASIS_POINT)
+    .minus(
+      new BigNumber(old_user.current_deposit)
+        .multipliedBy(new BigNumber(old_user.interest_rate))
+        .div(BASIS_POINT),
     );
-    updated_accumulative_index = updated_accumulative_index.gt(0)
-      ? updated_accumulative_index
-      : new BigNumber(0);
-  }
+
+  updated_accumulative_index = new BigNumber(accumulative_index).plus(
+    accumulative_index_diff,
+  );
+  updated_accumulative_index = updated_accumulative_index.gt(0)
+    ? updated_accumulative_index
+    : new BigNumber(0);
+  // }
 
   return { updated_accumulative_index, accumulative_index_diff };
 }
