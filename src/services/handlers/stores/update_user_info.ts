@@ -157,7 +157,6 @@ export const update_user_info = async (
     }
   });
 
-  console.log(old_current_user, current_user);
   // Update user into the database
   await current_user.save();
 
@@ -251,14 +250,6 @@ export const update_user_branches = async (
   if (user_ancestors.length && user_ancestors.length > 1 && user_data_trie) {
     //@dev Get newest current user details cuz the query above return included the default case
     let newest_current_user = user_ancestors[0].ancestor;
-
-    console.log(
-      "111111: ",
-      user.interest_rate,
-      user.current_deposit,
-      newest_current_user.interest_rate,
-      newest_current_user.current_deposit,
-    );
 
     let trie = user_data_trie.trie;
     let users_level_after_modify = {};
