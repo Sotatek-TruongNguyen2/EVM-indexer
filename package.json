@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start:prod": "set UV_THREADPOOL_SIZE=2 && node dist/server.js",
-    "start:dev": "set UV_THREADPOOL_SIZE=2 && nodemon src/server.ts --config nodemon.json --legacy-watch"
+    "start:prod": "set UV_THREADPOOL_SIZE=4 && node dist/server.js",
+    "start:dev": "set UV_THREADPOOL_SIZE=4 && nodemon src/server.ts --config nodemon.json --legacy-watch"
   },
   "dependencies": {
     "@synapseprotocol/sdk": "^0.94.1",
