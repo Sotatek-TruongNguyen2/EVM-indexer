@@ -1,5 +1,5 @@
 import PubSub from "pubsub-js";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { Log } from "@ethersproject/abstract-provider";
 
 // import Piscina from "piscina";
@@ -56,17 +56,12 @@ export class IndexForward {
   private _chain_store: ChainStore;
   private _deployment_latest_block: BlockPtr | undefined;
 
-  // private _pool: Piscina;
   private _logger: Logger;
   private _deployment: IContractDeployment;
   private _adapter: ETHAdapter;
   private _chain_head_emitter: any;
 
-  constructor(
-    deployment: IContractDeployment,
-    chain_store: ChainStore,
-    // pool: Piscina,
-  ) {
+  constructor(deployment: IContractDeployment, chain_store: ChainStore) {
     const indexer_config = IndexerConfig.getInstance();
 
     this._chain_store = chain_store;
@@ -80,12 +75,7 @@ export class IndexForward {
     this._block_polling_interval = indexer_config.NEW_BLOCK_POLLING_INTERVAL;
     this._deployment = deployment;
 
-    // this._pool = pool;
-    this._adapter = new ETHAdapter(
-      deployment.chain_id,
-      this.chain_store,
-      // this._pool,
-    );
+    this._adapter = new ETHAdapter(deployment.chain_id, this.chain_store);
 
     const chainConfig = ChainConfig[this.deployment.chain_id as number];
 
@@ -260,7 +250,6 @@ export class IndexForward {
       !this.deployment_latest_block ||
       chain_head_ptr.number - this.deployment_latest_block.number >
         indexer_config.REORG_THRESHOLD
-      // 30873386 30873356
     ) {
       // Since we are beyond the reorg threshold, the Ethereum node knows what block has
       // been permanently assigned this block number.
@@ -931,7 +920,9 @@ export class IndexForward {
       Object.keys(filter).map((first_topic) => {
         for (let log of block_data.logs) {
           if (
-            log.address === this.deployment.contract &&
+            // Use checksum address to prevent error
+            ethers.utils.getAddress(log.address) ===
+              ethers.utils.getAddress(this.deployment.contract) &&
             log.topics[0] === first_topic
           ) {
             triggers.push(log);

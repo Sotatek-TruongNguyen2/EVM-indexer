@@ -86,7 +86,7 @@ export class IndexerConfig {
           process.env.ETHEREUM_MAX_EVENT_ONLY_RANGE || 500,
         ),
         GRAPH_START_BLOCK: process.env.GRAPH_START_BLOCK || null,
-        // REORG_THRESHOLD: Number(process.env.REORG_THRESHOLD || 250),
+        // REORG_THRESHOLD: Number(process.env.REORG_THRESHOLD || 5),
         REORG_THRESHOLD: Number(process.env.REORG_THRESHOLD || 50),
         ETHEREUM_BLOCK_BATCH_SIZE: Number(
           process.env.ETHEREUM_BLOCK_BATCH_SIZE || 10,
