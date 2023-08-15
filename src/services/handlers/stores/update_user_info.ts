@@ -333,7 +333,7 @@ export const update_user_branches = async (
         accumulative_index_by_branch[F1_branch_address] || 0,
       )
         .plus(accumulative_index_diff)
-        .toNumber();
+        .toString();
 
       // @dev: Check breaking rules of all ancestor's branches
       const {
@@ -343,9 +343,9 @@ export const update_user_branches = async (
       } = await try_check_break_branch_rules(
         ancestor_descendants,
         current_level,
-        new BigNumber(accumulative_index_diff),
+        accumulative_index_diff,
         accumulative_index_by_branch,
-        new BigNumber(updated_accumulative_index), // Use the latest accumulative index
+        updated_accumulative_index, // Use the latest accumulative index
         disable_branches,
       );
 
@@ -509,23 +509,16 @@ async function try_check_break_branch_rules(
     }
   }
 
-  let updated_accumulative_index;
+  let updated_accumulative_index = accumulative_index;
 
   //@dev: Looping through all F1 that has break the rule
   Object.keys(ancestor_F1_address_branch_break_rule).map((F1_address) => {
     const break_rule = ancestor_F1_address_branch_break_rule[F1_address];
     //@dev: If the branch hasn't violated but now violated -> list it to disable branches
-    // subtract it from accumulative index as well
-    if (!disable_branches[F1_address] && break_rule) {
-      disable_branches[F1_address] = true;
-      updated_accumulative_index = accumulative_index.minus(
-        new BigNumber(accumulative_index_by_branch[F1_address]),
-      );
-    }
 
     if (disable_branches[F1_address] && !break_rule) {
       disable_branches[F1_address] = false;
-      updated_accumulative_index = accumulative_index.plus(
+      updated_accumulative_index = updated_accumulative_index.plus(
         new BigNumber(accumulative_index_by_branch[F1_address]).minus(
           accumulative_index_diff,
         ),
@@ -534,8 +527,17 @@ async function try_check_break_branch_rules(
 
     if (disable_branches[F1_address] && break_rule) {
       // @dev: In both case user deposit and withdraw tokens, we must subtract the diff from updated_accumulative_index
-      updated_accumulative_index = accumulative_index.minus(
+      updated_accumulative_index = updated_accumulative_index.minus(
         new BigNumber(accumulative_index_diff.abs()),
+      );
+    }
+
+    // subtract it from accumulative index as well
+    if (!disable_branches[F1_address] && break_rule) {
+      disable_branches[F1_address] = true;
+
+      updated_accumulative_index = updated_accumulative_index.minus(
+        new BigNumber(accumulative_index_by_branch[F1_address]),
       );
     }
   });
