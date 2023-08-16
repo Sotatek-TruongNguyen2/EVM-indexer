@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
 
-import { IUserModel, User } from "../models/user.model";
+import { DescendantPassingLevel, IUserModel, User } from "../models/user.model";
 // import { IUser } from "../types/IUser";
 import { UserLevel } from "../constants";
 import {
@@ -255,7 +255,7 @@ export const update_user_branches = async (
     let newest_current_user = user_ancestors[0].ancestor;
 
     let trie = user_data_trie.trie;
-    let users_level_after_modify = {};
+    // let users_level_after_modify = {};
 
     //@dev  Need to slice the first element to remove current user from list of ancestors
     user_ancestors = user_ancestors.slice(1);
@@ -279,6 +279,7 @@ export const update_user_branches = async (
         global_interest_rate_disabled,
         accumulative_index_by_branch,
         disable_branches,
+        descendants_passing_level,
       } = ancestor;
 
       //@dev: Find F1_address of the current ancestor
@@ -305,17 +306,6 @@ export const update_user_branches = async (
         timestamp,
       );
 
-      // if (ancestor._id === "0x8CeF92872931c4C0c2A7303248b5Ea57196D9e14") {
-      //   console.log(
-      //     "askdjkasjdksad: ",
-      //     updated_total_global_reward,
-      //     last_accrued_timestamp,
-      //     timestamp,
-      //     accumulative_index,
-      //     global_interest_rate_disabled === true ? 0 : global_interest_rate,
-      //   );
-      // }
-
       // Retrieve ancestor current level
       let current_level = await get_user_current_level(
         user_data_trie,
@@ -328,12 +318,22 @@ export const update_user_branches = async (
       );
 
       // @dev: Update passing level reward if possible
-      updated_total_global_reward = await try_distribute_level_passing_rewards(
-        ancestor_descendants,
+      const {
+        updated_total_global_reward:
+          updated_total_global_reward_after_level_passing,
+        updated_descendants_passing_level,
+      } = await try_distribute_level_passing_rewards(
+        descendants_passing_level,
+        ancestor._id,
         current_level,
+        ancestor_descendants,
         new BigNumber(updated_total_global_reward),
         new BigNumber(accumulative_index),
       );
+
+      descendants_passing_level = updated_descendants_passing_level;
+      updated_total_global_reward =
+        updated_total_global_reward_after_level_passing;
 
       let { updated_accumulative_index, accumulative_index_diff } =
         await try_update_accumulative_index(
@@ -348,16 +348,6 @@ export const update_user_branches = async (
       )
         .plus(accumulative_index_diff)
         .toString();
-
-      if (ancestor._id === "0x9beB9bad6A858d3C144fEFcb1Acd8cEa7DDfcCBe") {
-        console.log(
-          "aaccccc: ",
-          ancestor._id,
-          F1_branch_address,
-          accumulative_index_diff.toString(),
-          updated_accumulative_index.toString(),
-        );
-      }
 
       // @dev: Check breaking rules of all ancestor's branches
       const {
@@ -388,51 +378,75 @@ export const update_user_branches = async (
       let user_global_referral_interest_rate =
         UserLevelGlobalInterest[current_level];
 
-      users_level_after_modify[ancestor._id] = {
-        global_interest_rate: user_global_referral_interest_rate,
-        current_level,
-        branches,
-        last_accrued_timestamp: updated_last_accrued_timestamp,
-        total_global_reward: updated_total_global_reward,
-        accumulative_index: updated_accumulative_index.toFixed(),
-        disable_branches,
-        accumulative_index_by_branch,
-        global_interest_rate_disabled,
-      };
-    }
+      // users_level_after_modify[ancestor._id] = {
+      //   global_interest_rate: user_global_referral_interest_rate,
+      //   current_level,
+      //   branches,
+      //   last_accrued_timestamp: updated_last_accrued_timestamp,
+      //   total_global_reward: updated_total_global_reward,
+      //   accumulative_index: updated_accumulative_index.toFixed(),
+      //   disable_branches,
+      //   accumulative_index_by_branch,
+      //   global_interest_rate_disabled,
+      //   descendants_passing_level,
+      // };
 
-    await User.bulkWrite(
-      Object.keys(users_level_after_modify).map((ancestor_address) => {
-        const {
-          current_level,
-          total_global_reward,
-          global_interest_rate,
+      await User.findOneAndUpdate(
+        {
+          _id: ancestor._id,
+        },
+        {
+          global_interest_rate: user_global_referral_interest_rate,
+          level: current_level,
           branches,
-          accumulative_index,
-          last_accrued_timestamp,
+          last_accrued_timestamp: updated_last_accrued_timestamp,
+          total_global_reward: updated_total_global_reward,
+          accumulative_index: updated_accumulative_index.toFixed(),
           disable_branches,
           accumulative_index_by_branch,
-          global_interest_rate_enabled,
-        } = users_level_after_modify[ancestor_address];
-        return {
-          updateOne: {
-            filter: { _id: ancestor_address },
-            update: {
-              level: current_level,
-              branches,
-              global_interest_rate,
-              total_global_reward,
-              accumulative_index,
-              last_accrued_timestamp,
-              disable_branches,
-              accumulative_index_by_branch,
-              global_interest_rate_enabled,
-            },
-            upsert: true,
-          },
-        };
-      }),
-    );
+          global_interest_rate_disabled,
+          descendants_passing_level,
+        },
+        {
+          upsert: true,
+        },
+      );
+    }
+
+    // await User.bulkWrite(
+    //   Object.keys(users_level_after_modify).map((ancestor_address) => {
+    //     const {
+    //       current_level,
+    //       total_global_reward,
+    //       global_interest_rate,
+    //       branches,
+    //       accumulative_index,
+    //       last_accrued_timestamp,
+    //       disable_branches,
+    //       accumulative_index_by_branch,
+    //       global_interest_rate_enabled,
+    //       descendants_passing_level,
+    //     } = users_level_after_modify[ancestor_address];
+    //     return {
+    //       updateOne: {
+    //         filter: { _id: ancestor_address },
+    //         update: {
+    //           level: current_level,
+    //           branches,
+    //           global_interest_rate,
+    //           total_global_reward,
+    //           accumulative_index,
+    //           last_accrued_timestamp,
+    //           disable_branches,
+    //           accumulative_index_by_branch,
+    //           global_interest_rate_enabled,
+    //           descendants_passing_level,
+    //         },
+    //         upsert: true,
+    //       },
+    //     };
+    //   }),
+    // );
 
     await UserDataTrie.findByIdAndUpdate(
       user_data_trie ? user_data_trie._id : undefined,
@@ -448,12 +462,17 @@ export const update_user_branches = async (
   }
 };
 
-async function try_distribute_level_passing_rewards(
-  ancestor_descendants: any[],
+function try_distribute_level_passing_rewards(
+  descendants_passing_level: DescendantPassingLevel,
+  ancestor_address: string,
   ancestor_level: UserLevel,
+  ancestor_descendants: any[],
   ancestor_total_global_reward: BigNumber,
   accumulative_index: BigNumber,
-) {
+): {
+  updated_descendants_passing_level: DescendantPassingLevel;
+  updated_total_global_reward: string;
+} {
   let ancestor_updated_total_global_reward = ancestor_total_global_reward;
 
   for (let ancestor_descendant of ancestor_descendants) {
@@ -462,18 +481,39 @@ async function try_distribute_level_passing_rewards(
       UserLevelGlobalInterest[descendant.level] >
       UserLevelGlobalInterest[ancestor_level]
     ) {
-      // Update ancestor latest reward
-      ancestor_updated_total_global_reward = new BigNumber(
-        ancestor_updated_total_global_reward,
-      ).plus(
-        accumulative_index
-          .multipliedBy(new BigNumber(USER_LEVEL_PASSED_INTEREST))
-          .div(10000),
-      );
+      if (descendant._id === "0x18376D23AbcA549f87037D9b974F86A5E4e9Fb3f") {
+        console.log("ZIZI: ", descendant.level, ancestor_level);
+      }
+      let descendant_previous_passing_level =
+        descendants_passing_level[ancestor_address];
+
+      let alreadyRewarded =
+        descendant_previous_passing_level?.descendant_level ===
+          descendant.level &&
+        descendant_previous_passing_level?.ancestor_level === ancestor_level;
+
+      if (!alreadyRewarded) {
+        ancestor_updated_total_global_reward = new BigNumber(
+          ancestor_updated_total_global_reward,
+        ).plus(
+          accumulative_index
+            .multipliedBy(new BigNumber(USER_LEVEL_PASSED_INTEREST))
+            .div(10000),
+        );
+
+        descendants_passing_level[descendant._id] = {
+          descendant_level: descendant.level,
+          ancestor_level: ancestor_level,
+        };
+      }
     }
   }
 
-  return ancestor_updated_total_global_reward.toString();
+  return {
+    updated_total_global_reward:
+      ancestor_updated_total_global_reward.toString(),
+    updated_descendants_passing_level: descendants_passing_level,
+  };
 }
 
 async function try_check_break_branch_rules(
@@ -511,6 +551,8 @@ async function try_check_break_branch_rules(
     };
   }
 
+  // ancestor_F1_address_branch_break_rule[F1_branch_address] = false;
+
   // Loop through all ancestor descendants to find if any descendant violate the rule
   for (let [index, ancestor_descendant] of ancestor_descendants.entries()) {
     let descendant = ancestor_descendant.descendant;
@@ -524,14 +566,14 @@ async function try_check_break_branch_rules(
         break;
       }
       F1_address = referralBy;
+      ancestor_F1_address_branch_break_rule[F1_address] = false;
     }
 
     //@dev: Find out if in branches that has an user whose level
     // more than the ancestor -> disable that branch
     if (
       UserLevelGlobalInterest[descendant.level] >=
-        UserLevelGlobalInterest[ancestor_level] &&
-      F1_branch_address === F1_address
+      UserLevelGlobalInterest[ancestor_level]
     ) {
       ancestor_F1_address_branch_break_rule[F1_address] = true;
     }
@@ -548,12 +590,16 @@ async function try_check_break_branch_rules(
       disable_branches[F1_address] = false;
       updated_accumulative_index = updated_accumulative_index.plus(
         new BigNumber(accumulative_index_by_branch[F1_address]).minus(
-          accumulative_index_diff,
+          F1_address === F1_branch_address ? accumulative_index_diff : "0",
         ),
       );
     }
 
-    if (disable_branches[F1_address] && break_rule) {
+    if (
+      disable_branches[F1_address] &&
+      break_rule &&
+      F1_address === F1_branch_address
+    ) {
       // @dev: In both case user deposit and withdraw tokens, we must subtract the diff from updated_accumulative_index
       updated_accumulative_index = updated_accumulative_index.minus(
         accumulative_index_diff,

@@ -1,10 +1,10 @@
-import mongoose, { Document } from "mongoose";
-import { SECONDS_IN_DAY_IN_MILLISECONDS, UserLevel } from "../constants";
+import mongoose, { Document, Schema } from "mongoose";
+import { UserLevel } from "../constants";
 
-export interface IBranchStaking extends Document {
-  total_staking: string;
-  type: string;
-}
+export type DescendantPassingLevel = Map<
+  string,
+  { descendant_level: string; ancestor_level: string }
+>;
 
 export interface IUserModel extends Document {
   _id: string;
@@ -16,6 +16,7 @@ export interface IUserModel extends Document {
   global_interest_rate: number;
   accumulative_index: number;
   accumulative_index_by_branch: Map<string, string>;
+  descendants_passing_level: DescendantPassingLevel;
   disable_branches: Map<string, boolean>;
   global_interest_rate_disabled: boolean;
   last_accrued_timestamp: number;
@@ -42,17 +43,7 @@ export const UserModelSchema = new mongoose.Schema({
   _id: {
     type: String,
     required: true,
-    // index: {
-    //   unique: true,
-    // },
   },
-  // address: {
-  //   type: String,
-  //   required: true,
-  //   index: {
-  //     unique: true,
-  //   },
-  // },
   level: {
     type: String,
     enum: UserLevel,
@@ -111,6 +102,22 @@ export const UserModelSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: 0,
+  },
+  descendants_passing_level: {
+    type: Map,
+    of: new Schema({
+      descendant_level: {
+        type: String,
+        enum: UserLevel,
+        default: UserLevel.UNKNOWN,
+      },
+      ancestor_level: {
+        type: String,
+        enum: UserLevel,
+        default: UserLevel.UNKNOWN,
+      },
+    }),
+    default: {},
   },
 });
 
