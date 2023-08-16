@@ -50,13 +50,13 @@ export async function callRPCMethod({
       updated_failed_time,
     );
 
-    const matched = TOO_MANY_LOGS_FINGERPRINTS.some((error) =>
-      err.message.includes(error),
-    );
+    // const matched = TOO_MANY_LOGS_FINGERPRINTS.some((error) =>
+    //   err.message.includes(error),
+    // );
     if (
-      matched &&
+      //   matched &&
       updated_failed_time >
-        indexer_config.MAXIMUM_RPC_REQUEST_FAILED_TOLERANT_TIMES
+      indexer_config.MAXIMUM_RPC_REQUEST_FAILED_TOLERANT_TIMES
     ) {
       const new_rpc_url = setProviderIndex(chainId);
       const message = `Set network ${chainId} current RPC url to: ${new_rpc_url.connection.url}`;

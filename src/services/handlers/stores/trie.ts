@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { UserLevel } from "../constants";
 import { IUserDataTrie, UserDataTrie } from "../models/trie";
 import { EnvironmentConfig } from "../../../config/env";
+import { trim_0x_in_address } from "../../../utils/address";
 
 export const upsert_new_node = (
   str: string,
@@ -43,18 +44,18 @@ export const get_user_level_by_address = (
   }
 
   let available = true;
-  let immediate_node;
+  let immediate_node = node;
 
   for (let c of addr) {
-    if (!node.keys[c]) {
+    if (!immediate_node.keys[c]) {
       return UserLevel.UNKNOWN;
     }
 
-    immediate_node = node.keys[c];
+    immediate_node = immediate_node.keys[c];
   }
 
   if (available && immediate_node && immediate_node.end) {
-    return immediate_node.data.level;
+    return immediate_node.data.current_level;
   }
 
   return UserLevel.UNKNOWN;
@@ -75,7 +76,7 @@ export const upsert_user_data = async (
 ) => {
   const user_data_trie = await get_user_data_trie();
 
-  const address_without_0x = user_addr.substring(2);
+  const address_without_0x = trim_0x_in_address(user_addr);
 
   let default_root_trie = { keys: {}, data: {}, end: false };
   let trie = user_data_trie ? user_data_trie.trie : default_root_trie;
@@ -106,7 +107,9 @@ export const get_level_by_user_addresses = async (
   }
 
   for (let addr of user_addresses) {
-    levels.push(get_user_level_by_address(addr, user_data_trie.trie));
+    levels.push(
+      get_user_level_by_address(trim_0x_in_address(addr), user_data_trie.trie),
+    );
   }
 
   return levels;
@@ -118,7 +121,7 @@ export const get_user_current_level = async (
 ): Promise<UserLevel> => {
   const environment_config = EnvironmentConfig.getInstance();
   const branch_types = {};
-  let unknown_branches_staking = "0";
+  let total_branches_staking = "0";
 
   const F1_addresses = Object.keys(branches);
   const F1_levels = await get_level_by_user_addresses(
@@ -129,19 +132,18 @@ export const get_user_current_level = async (
   if (F1_addresses.length > 0 && F1_addresses.length === F1_levels.length) {
     for (let [index, F1_address] of F1_addresses.entries()) {
       // Count how many F1 levels already have
-      branch_types[F1_levels[index]] +=
+      branch_types[F1_levels[index]] =
         (branch_types[F1_levels[index]] || 0) + 1;
-      if (F1_levels[index] === UserLevel.UNKNOWN) {
-        unknown_branches_staking = new BigNumber(unknown_branches_staking)
-          .plus(
-            new BigNumber(branches[F1_address]).gt(
-              environment_config.MAXIMUM_BRANCH_STAKING,
-            )
-              ? new BigNumber(environment_config.MAXIMUM_BRANCH_STAKING)
-              : new BigNumber(branches[F1_address]),
+
+      total_branches_staking = new BigNumber(total_branches_staking)
+        .plus(
+          new BigNumber(branches[F1_address]).gt(
+            environment_config.MAXIMUM_BRANCH_STAKING,
           )
-          .toString();
-      }
+            ? new BigNumber(environment_config.MAXIMUM_BRANCH_STAKING)
+            : new BigNumber(branches[F1_address]),
+        )
+        .toString();
     }
 
     if (branch_types[UserLevel.BLACK_DIAMOND] >= 3) {
@@ -174,14 +176,8 @@ export const get_user_current_level = async (
       return UserLevel.RUBY;
     }
 
-    // console.log(
-    //   "zxczxcx: ",
-    //   unknown_branches_staking,
-    //   environment_config.SHAPPIRE_LEVEL_STAKING_CONDITION,
-    // );
-
     if (
-      new BigNumber(unknown_branches_staking).gte(
+      new BigNumber(total_branches_staking).gte(
         new BigNumber(environment_config.SHAPPIRE_LEVEL_STAKING_CONDITION),
       )
     ) {

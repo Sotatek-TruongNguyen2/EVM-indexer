@@ -20,6 +20,7 @@ import {
   UserStakingInterest,
 } from "../constants/user";
 import { calculate_total_global_rewards } from "../../../helpers/calculate_total_global_rewards";
+import { trim_0x_in_address } from "../../../utils/address";
 
 export const retrieve_user_descendants_by_addr = async (
   user_addr: string,
@@ -98,7 +99,9 @@ export const retrieve_user = async (user_addr: string): Promise<IUserModel> => {
     );
 
     // @dev: Insert user data into Patricia Trie
-    await upsert_user_data(user_addr);
+    await upsert_user_data(user_addr, {
+      current_level: UserLevel.UNKNOWN,
+    });
   }
 
   return current_user;
@@ -258,7 +261,7 @@ export const update_user_branches = async (
     user_ancestors = user_ancestors.slice(1);
 
     // Insert current level and staking interest rate into user data trie for further query
-    trie = upsert_new_node(newest_current_user._id, trie, {
+    trie = upsert_new_node(trim_0x_in_address(newest_current_user._id), trie, {
       // current_level: current_level,
       interest_rate: newest_current_user.interest_rate,
       total_deposit_amount: newest_current_user.current_deposit,
@@ -302,6 +305,17 @@ export const update_user_branches = async (
         timestamp,
       );
 
+      // if (ancestor._id === "0x8CeF92872931c4C0c2A7303248b5Ea57196D9e14") {
+      //   console.log(
+      //     "askdjkasjdksad: ",
+      //     updated_total_global_reward,
+      //     last_accrued_timestamp,
+      //     timestamp,
+      //     accumulative_index,
+      //     global_interest_rate_disabled === true ? 0 : global_interest_rate,
+      //   );
+      // }
+
       // Retrieve ancestor current level
       let current_level = await get_user_current_level(
         user_data_trie,
@@ -318,7 +332,7 @@ export const update_user_branches = async (
         ancestor_descendants,
         current_level,
         new BigNumber(updated_total_global_reward),
-        accumulative_index,
+        new BigNumber(accumulative_index),
       );
 
       let { updated_accumulative_index, accumulative_index_diff } =
@@ -330,10 +344,20 @@ export const update_user_branches = async (
 
       // Update Accumulative index diff for each branch
       accumulative_index_by_branch[F1_branch_address] = new BigNumber(
-        accumulative_index_by_branch[F1_branch_address] || 0,
+        accumulative_index_by_branch[F1_branch_address] || "0",
       )
         .plus(accumulative_index_diff)
         .toString();
+
+      if (ancestor._id === "0x9beB9bad6A858d3C144fEFcb1Acd8cEa7DDfcCBe") {
+        console.log(
+          "aaccccc: ",
+          ancestor._id,
+          F1_branch_address,
+          accumulative_index_diff.toString(),
+          updated_accumulative_index.toString(),
+        );
+      }
 
       // @dev: Check breaking rules of all ancestor's branches
       const {
@@ -341,6 +365,7 @@ export const update_user_branches = async (
         disable_branches: updated_disable_branches,
         global_interest_rate_disabled: updated_global_interest_rate_disabled,
       } = await try_check_break_branch_rules(
+        F1_branch_address,
         ancestor_descendants,
         current_level,
         accumulative_index_diff,
@@ -354,7 +379,7 @@ export const update_user_branches = async (
       disable_branches = updated_disable_branches;
 
       // Insert current level and staking interest rate into user data trie for further query
-      trie = upsert_new_node(ancestor._id, trie, {
+      trie = upsert_new_node(trim_0x_in_address(ancestor._id), trie, {
         current_level,
         // interest_rate: ancestor.interest_rate,
         // total_deposit_amount: ancestor,
@@ -430,6 +455,7 @@ async function try_distribute_level_passing_rewards(
   accumulative_index: BigNumber,
 ) {
   let ancestor_updated_total_global_reward = ancestor_total_global_reward;
+
   for (let ancestor_descendant of ancestor_descendants) {
     let descendant = ancestor_descendant.descendant;
     if (
@@ -440,8 +466,8 @@ async function try_distribute_level_passing_rewards(
       ancestor_updated_total_global_reward = new BigNumber(
         ancestor_updated_total_global_reward,
       ).plus(
-        new BigNumber(accumulative_index)
-          .multipliedBy(USER_LEVEL_PASSED_INTEREST)
+        accumulative_index
+          .multipliedBy(new BigNumber(USER_LEVEL_PASSED_INTEREST))
           .div(10000),
       );
     }
@@ -451,6 +477,7 @@ async function try_distribute_level_passing_rewards(
 }
 
 async function try_check_break_branch_rules(
+  F1_branch_address,
   ancestor_descendants: any[],
   ancestor_level: UserLevel,
   accumulative_index_diff: BigNumber,
@@ -503,7 +530,8 @@ async function try_check_break_branch_rules(
     // more than the ancestor -> disable that branch
     if (
       UserLevelGlobalInterest[descendant.level] >=
-      UserLevelGlobalInterest[ancestor_level]
+        UserLevelGlobalInterest[ancestor_level] &&
+      F1_branch_address === F1_address
     ) {
       ancestor_F1_address_branch_break_rule[F1_address] = true;
     }
@@ -528,7 +556,7 @@ async function try_check_break_branch_rules(
     if (disable_branches[F1_address] && break_rule) {
       // @dev: In both case user deposit and withdraw tokens, we must subtract the diff from updated_accumulative_index
       updated_accumulative_index = updated_accumulative_index.minus(
-        new BigNumber(accumulative_index_diff.abs()),
+        accumulative_index_diff,
       );
     }
 
