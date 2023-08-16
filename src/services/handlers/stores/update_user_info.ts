@@ -402,7 +402,7 @@ export const update_user_branches = async (
           branches,
           last_accrued_timestamp: updated_last_accrued_timestamp,
           total_global_reward: updated_total_global_reward,
-          accumulative_index: updated_accumulative_index.toFixed(),
+          accumulative_index: updated_accumulative_index.toString(),
           disable_branches,
           accumulative_index_by_branch,
           global_interest_rate_disabled,
@@ -551,7 +551,9 @@ async function try_check_break_branch_rules(
   for (let ancestor_descendant of ancestor_descendants) {
     // Get all ancestor F1s
     if (ancestor_descendant.path_length === 1) {
-      ancestor_F1_address_branch_break_rule[F1_branch_address] = false;
+      ancestor_F1_address_branch_break_rule[
+        ancestor_descendant.descendant._id
+      ] = false;
       total_F1s++;
     }
 
@@ -571,7 +573,6 @@ async function try_check_break_branch_rules(
     while (true) {
       const { path_length, referralBy } = descendant_to_path_length[F1_address];
       if (path_length === 1) {
-        // ancestor_F1_address_branch_break_rule[F1_address] = false;
         break;
       }
       F1_address = referralBy;

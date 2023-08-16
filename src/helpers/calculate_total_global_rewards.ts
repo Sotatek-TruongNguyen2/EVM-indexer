@@ -5,7 +5,7 @@ const SECONDS_IN_YEAR_IN_SECONDS = 365 * 86400;
 // const ACCUMULATIVE_PRECISION = 1e18;
 
 export const calculate_total_global_rewards = (
-  accumulative_index: number,
+  accumulative_index: string,
   total_global_reward: string,
   global_interest_rate: number,
   last_accrued_timestamp: number,
@@ -23,7 +23,7 @@ export const calculate_total_global_rewards = (
   const pending_rewards = new BigNumber(
     current_timestamp - last_accrued_timestamp,
   )
-    .multipliedBy(accumulative_index)
+    .multipliedBy(new BigNumber(accumulative_index))
     .multipliedBy(global_interest_rate)
     .div(SECONDS_IN_YEAR_IN_SECONDS)
     .div(10000);

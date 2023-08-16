@@ -14,7 +14,7 @@ export interface IUserModel extends Document {
   level: string;
   interest_rate: number;
   global_interest_rate: number;
-  accumulative_index: number;
+  accumulative_index: string;
   accumulative_index_by_branch: Map<string, string>;
   descendants_passing_level: DescendantPassingLevel;
   disable_branches: Map<string, boolean>;
@@ -79,7 +79,7 @@ export const UserModelSchema = new mongoose.Schema({
     default: false,
   },
   accumulative_index: {
-    type: Number,
+    type: String,
     required: true,
     default: 0,
   },
