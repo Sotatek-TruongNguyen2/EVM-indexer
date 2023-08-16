@@ -328,7 +328,8 @@ export const update_user_branches = async (
         current_level,
         ancestor_descendants,
         new BigNumber(updated_total_global_reward),
-        new BigNumber(accumulative_index),
+        accumulative_index_by_branch,
+        // new BigNumber(accumulative_index),
       );
 
       descendants_passing_level = updated_descendants_passing_level;
@@ -468,11 +469,22 @@ function try_distribute_level_passing_rewards(
   ancestor_level: UserLevel,
   ancestor_descendants: any[],
   ancestor_total_global_reward: BigNumber,
-  accumulative_index: BigNumber,
+  accumulative_index_by_branch: Map<string, string>,
 ): {
   updated_descendants_passing_level: DescendantPassingLevel;
   updated_total_global_reward: string;
 } {
+  let accumulative_index = new BigNumber(0);
+
+  Object.keys(accumulative_index_by_branch).map((F1_branch_address) => {
+    // if (ancestor_address === "0x202a7eb1435CDb9bED88D72003fE518D56c060C5") {
+    //   console.log("ZALO: ", accumulative_index_by_branch[F1_branch_address]);
+    // }
+    accumulative_index = accumulative_index.plus(
+      new BigNumber(accumulative_index_by_branch[F1_branch_address]),
+    );
+  });
+
   let ancestor_updated_total_global_reward = ancestor_total_global_reward;
 
   for (let ancestor_descendant of ancestor_descendants) {
@@ -481,9 +493,6 @@ function try_distribute_level_passing_rewards(
       UserLevelGlobalInterest[descendant.level] >
       UserLevelGlobalInterest[ancestor_level]
     ) {
-      if (descendant._id === "0x18376D23AbcA549f87037D9b974F86A5E4e9Fb3f") {
-        console.log("ZIZI: ", descendant.level, ancestor_level);
-      }
       let descendant_previous_passing_level =
         descendants_passing_level[ancestor_address];
 
@@ -542,6 +551,7 @@ async function try_check_break_branch_rules(
   for (let ancestor_descendant of ancestor_descendants) {
     // Get all ancestor F1s
     if (ancestor_descendant.path_length === 1) {
+      ancestor_F1_address_branch_break_rule[F1_branch_address] = false;
       total_F1s++;
     }
 
@@ -550,8 +560,6 @@ async function try_check_break_branch_rules(
       referralBy: ancestor_descendant.descendant.referralBy,
     };
   }
-
-  // ancestor_F1_address_branch_break_rule[F1_branch_address] = false;
 
   // Loop through all ancestor descendants to find if any descendant violate the rule
   for (let [index, ancestor_descendant] of ancestor_descendants.entries()) {
@@ -563,10 +571,10 @@ async function try_check_break_branch_rules(
     while (true) {
       const { path_length, referralBy } = descendant_to_path_length[F1_address];
       if (path_length === 1) {
+        // ancestor_F1_address_branch_break_rule[F1_address] = false;
         break;
       }
       F1_address = referralBy;
-      ancestor_F1_address_branch_break_rule[F1_address] = false;
     }
 
     //@dev: Find out if in branches that has an user whose level

@@ -43,7 +43,7 @@ const ChainConfig: ChainsConfig = {
     deployments: [
       {
         contract: "0xA064EeFcDFaE4507Ec2a9613983eFE24A74C243D",
-        // start_block: 324574998, // Block to backindex until
+        // start_block: 32457498, // Block to backindex until
         // oldest_block: 32457498, // Start indexing old
         start_block: 32322340, // Block to backindex until
         oldest_block: 32322340, // Start indexing older txns from here until startblock
