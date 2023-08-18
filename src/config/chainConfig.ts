@@ -34,19 +34,56 @@ const ChainConfig: ChainsConfig = {
   //   // tokens: buildTokenInfo(ChainId.ETH),
   // },
 
-  [ChainId.BSC_TESTNET]: {
-    id: ChainId.BSC_TESTNET,
-    name: Networks.BSC_TESTNET.name,
+  // [ChainId.BSC_TESTNET]: {
+  //   id: ChainId.BSC_TESTNET,
+  //   name: Networks.BSC_TESTNET.name,
+  //   rpcUrls: () => {
+  //     return process.env.BSC_TESTNET_RPC ? process.env.BSC_TESTNET_RPC?.split(",") : [];
+  //   },
+  //   deployments: [
+  //     {
+  //       contract: "0xA064EeFcDFaE4507Ec2a9613983eFE24A74C243D",
+  //       start_block: 32457498, // Block to backindex until
+  //       oldest_block: 32457498, // Start indexing old
+  //       // start_block: 32492278, // Block to backindex until
+  //       // oldest_block: 32492278, // Start indexing older txns from here until startblock
+  //       // tokens: buildTokenInfo(ChainId.ETH),
+  //       filters: {
+  //         // "0x7ed629d198faf210a8b65c3c30bf1ab4a789fb6123ed208a03358fcebe7c9dd8":
+  //         //   {
+  //         //     eventName: "ReferralLevelAdded",
+  //         //   },
+  //         "0x5548c837ab068cf56a2c2479df0882a4922fd203edb7517321831d95078c5f62":
+  //           {
+  //             eventName: "Deposit",
+  //           },
+  //         "0x884edad9ce6fa2440d8a54cc123490eb96d2768479d49ff9c7366125a9424364":
+  //           {
+  //             eventName: "Withdraw",
+  //           },
+  //       },
+  //       handlers: {
+  //         "0x5548c837ab068cf56a2c2479df0882a4922fd203edb7517321831d95078c5f62":
+  //           "user_deposit_handler",
+  //         "0x884edad9ce6fa2440d8a54cc123490eb96d2768479d49ff9c7366125a9424364":
+  //           "user_withdraw_handler",
+  //       },
+  //     },
+  //   ],
+  // },
+  [ChainId.BSC]: {
+    id: ChainId.BSC,
+    name: Networks.BSC.name,
     rpcUrls: () => {
       return process.env.BSC_RPC ? process.env.BSC_RPC?.split(",") : [];
     },
     deployments: [
       {
-        contract: "0x2D77fD87db8315E1569ad52c8d12B02489E9A053",
-        // start_block: 32457498, // Block to backindex until
-        // oldest_block: 32457498, // Start indexing old
-        start_block: 32492278, // Block to backindex until
-        oldest_block: 32492278, // Start indexing older txns from here until startblock
+        contract: "0x85a33726E27bBd6b4560620B12Ce109B7909eA41",
+        start_block: 30950837, // Block to backindex until
+        oldest_block: 30950837, // Start indexing old
+        // start_block: 32492278, // Block to backindex until
+        // oldest_block: 32492278, // Start indexing older txns from here until startblock
         // tokens: buildTokenInfo(ChainId.ETH),
         filters: {
           // "0x7ed629d198faf210a8b65c3c30bf1ab4a789fb6123ed208a03358fcebe7c9dd8":

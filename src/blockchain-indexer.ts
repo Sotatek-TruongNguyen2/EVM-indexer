@@ -15,11 +15,11 @@ export class BlockchainIndexer {
       // if (isMainThread) {
       await save_contract_deployments();
 
-      const chain_store = new ChainStore(97);
+      const chain_store = new ChainStore(56);
 
       let deployments = await get_all_deployments();
 
-      const block_ingestor = new BlockIngestor(97, chain_store);
+      const block_ingestor = new BlockIngestor(56, chain_store);
       block_ingestor.start();
 
       for (let deployment of deployments) {

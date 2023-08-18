@@ -477,9 +477,6 @@ function try_distribute_level_passing_rewards(
   let accumulative_index = new BigNumber(0);
 
   Object.keys(accumulative_index_by_branch).map((F1_branch_address) => {
-    // if (ancestor_address === "0x202a7eb1435CDb9bED88D72003fE518D56c060C5") {
-    //   console.log("ZALO: ", accumulative_index_by_branch[F1_branch_address]);
-    // }
     accumulative_index = accumulative_index.plus(
       new BigNumber(accumulative_index_by_branch[F1_branch_address]),
     );
@@ -489,32 +486,42 @@ function try_distribute_level_passing_rewards(
 
   for (let ancestor_descendant of ancestor_descendants) {
     let descendant = ancestor_descendant.descendant;
-    if (
+
+    // @dev: Get the record that descendant passed the ancestor level in the past
+    let descendant_previous_passing_level =
+      descendants_passing_level[descendant._id];
+
+    // @dev: Check if descendant level is currently passing ancestor level
+    let current_passing =
       UserLevelGlobalInterest[descendant.level] >
-      UserLevelGlobalInterest[ancestor_level]
-    ) {
-      let descendant_previous_passing_level =
-        descendants_passing_level[ancestor_address];
+      UserLevelGlobalInterest[ancestor_level];
 
-      let alreadyRewarded =
-        descendant_previous_passing_level?.descendant_level ===
-          descendant.level &&
-        descendant_previous_passing_level?.ancestor_level === ancestor_level;
+    // @dev: If descendant level is currently not passing ancestor level anymore -> delete from the list
+    if (descendant_previous_passing_level && !current_passing) {
+      delete descendants_passing_level[descendant._id];
+    }
 
-      if (!alreadyRewarded) {
-        ancestor_updated_total_global_reward = new BigNumber(
-          ancestor_updated_total_global_reward,
-        ).plus(
-          accumulative_index
-            .multipliedBy(new BigNumber(USER_LEVEL_PASSED_INTEREST))
-            .div(10000),
-        );
+    // @dev:  If descendant level is currently passing ancestor level and wasn't pass in the past -> Reward (1%)
+    if (!descendant_previous_passing_level && current_passing) {
+      ancestor_updated_total_global_reward = new BigNumber(
+        ancestor_updated_total_global_reward,
+      ).plus(
+        accumulative_index
+          .multipliedBy(new BigNumber(USER_LEVEL_PASSED_INTEREST))
+          .div(10000),
+      );
 
-        descendants_passing_level[descendant._id] = {
-          descendant_level: descendant.level,
-          ancestor_level: ancestor_level,
-        };
-      }
+      descendants_passing_level[descendant._id] = {
+        descendant_level: descendant.level,
+        ancestor_level: ancestor_level,
+      };
+    }
+
+    if (descendant_previous_passing_level && current_passing) {
+      descendants_passing_level[descendant._id] = {
+        descendant_level: descendant.level,
+        ancestor_level: ancestor_level,
+      };
     }
   }
 
@@ -547,6 +554,8 @@ async function try_check_break_branch_rules(
   let global_interest_rate_disabled = false;
   // Total ancestor F1s
   let total_F1s = 0;
+  // Total F1 that breaks the rule
+  let total_F1s_break_rules = 0;
 
   for (let ancestor_descendant of ancestor_descendants) {
     // Get all ancestor F1s
@@ -582,9 +591,11 @@ async function try_check_break_branch_rules(
     // more than the ancestor -> disable that branch
     if (
       UserLevelGlobalInterest[descendant.level] >=
-      UserLevelGlobalInterest[ancestor_level]
+        UserLevelGlobalInterest[ancestor_level] &&
+      !ancestor_F1_address_branch_break_rule[F1_address]
     ) {
       ancestor_F1_address_branch_break_rule[F1_address] = true;
+      total_F1s_break_rules++;
     }
   }
 
@@ -626,7 +637,7 @@ async function try_check_break_branch_rules(
   });
 
   // Check if all F1 branch has been disabled
-  if (Object.keys(ancestor_F1_address_branch_break_rule).length === total_F1s) {
+  if (total_F1s_break_rules === total_F1s) {
     global_interest_rate_disabled = true;
   }
 
