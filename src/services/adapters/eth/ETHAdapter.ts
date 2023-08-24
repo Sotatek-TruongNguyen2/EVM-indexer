@@ -1,8 +1,9 @@
 import { Logger } from "winston";
 import {
   Block,
-  Log,
   BlockWithTransactions,
+  TransactionReceipt,
+  Log,
 } from "@ethersproject/abstract-provider";
 // import Piscina from "piscina";
 // import path from "path";
@@ -21,6 +22,7 @@ import { BlockPtr, BlockWithLogs } from "../../../types";
 import { ChainStore } from "../../store/chain_head_store";
 import { TOO_MANY_LOGS_FINGERPRINTS } from "../../errors";
 import { callRPCMethod, callRPCRawMethod } from "../../../utils/rpcRequest";
+import { Transaction } from "@ethersproject/transactions";
 
 export class ETHAdapter {
   private _block_batch_size: number;
@@ -99,8 +101,8 @@ export class ETHAdapter {
 
   public async load_blocks_rpc(ids: string[]): Promise<BlockWithLogs[]> {
     const load_block = (id: string) => async () => {
-      const block_with_txs = await this.get_block_by_hash_with_logs(id);
-      return block_with_txs;
+      const block_with_logs = await this.get_block_by_hash_with_logs(id);
+      return block_with_logs;
     };
 
     const run_retry_with_block = (id: string, logger: Logger) => {
@@ -113,7 +115,7 @@ export class ETHAdapter {
       };
     };
 
-    let blocks: any[] = [];
+    let blocks: BlockWithLogs[] = [];
 
     let batches_index = 0;
     let block_fetch_batch_retries: (() => Promise<void>)[][] = [];
@@ -140,12 +142,36 @@ export class ETHAdapter {
 
       result.forEach((block_fetch_result) => {
         if (block_fetch_result.status === "fulfilled") {
-          blocks.push(block_fetch_result.value);
+          blocks.push(block_fetch_result.value as any);
         }
       });
     }
 
     return blocks;
+  }
+
+  public async get_transaction_receipts_for_transaction_hashes(
+    transaction_hashes_by_block: Map<string, Set<string>>,
+  ): Promise<Map<string, TransactionReceipt>> {
+    let receipts_by_hash = new Map<string, TransactionReceipt>();
+
+    if (transaction_hashes_by_block.size === 0) {
+      return receipts_by_hash;
+    }
+
+    for (const [
+      block_hash,
+      transaction_hashes,
+    ] of transaction_hashes_by_block.entries()) {
+      for (let transaction_hash of Array.from(transaction_hashes)) {
+        const transaction_receipt =
+          await this.fetch_transaction_receipt_by_hash(transaction_hash);
+
+        receipts_by_hash.set(transaction_hash, transaction_receipt);
+      }
+    }
+
+    return receipts_by_hash;
   }
 
   public async get_block_hash_by_block_number(
@@ -159,18 +185,6 @@ export class ETHAdapter {
       );
 
       const get_block_hash = (block_number: number) => async () => {
-        // let result = await this.pool.run(
-        //   {
-        //     chainId: this.chain_id,
-        //     callable: "getBlock",
-        //     params: [block_number],
-        //     // logger: this.logger,
-        //   },
-        //   {
-        //     name: "callRPCMethod",
-        //   },
-        // );
-
         let result = await callRPCMethod({
           chainId: this.chain_id,
           callable: "getBlock",
@@ -187,6 +201,39 @@ export class ETHAdapter {
     } catch (err: any) {
       this.logger.warn(
         `Ethereum node took too long to return data for block #${block_number}`,
+      );
+      throw err;
+    }
+  }
+
+  public async fetch_transaction_receipt_by_hash(
+    tx_hash: string,
+  ): Promise<TransactionReceipt> {
+    try {
+      let retry = new RetryConfig(
+        `eth_getTransactionReceipt RPC call for transaction hash ${tx_hash}`,
+        this.logger,
+        TOO_MANY_LOGS_FINGERPRINTS,
+      );
+
+      const get_transaction_receipt_by_hash = (tx_hash: string) => async () => {
+        let result = await callRPCRawMethod({
+          chainId: this.chain_id,
+          method: "eth_getTransactionReceipt",
+          params: [tx_hash],
+          logger: this.logger,
+        });
+
+        return result;
+      };
+
+      const result = await retry.run(
+        get_transaction_receipt_by_hash(tx_hash)(),
+      );
+      return result;
+    } catch (err: any) {
+      this.logger.warn(
+        `Ethereum node took too long to find the receipt for transaction hash ${tx_hash}`,
       );
       throw err;
     }
@@ -242,44 +289,22 @@ export class ETHAdapter {
       );
 
       const get_block_hash_with_logs = (block_hash: string) => async () => {
-        // let result = (await this.pool.run(
-        //   {
-        //     chainId: this.chain_id,
-        //     method: "eth_getBlockByHash",
-        //     params: [block_hash, true],
-        //     // logger: this.logger,
-        //   },
-        //   { name: "callRPCRawMethod" },
-        // )) as BlockWithTransactions;
-
         let result = (await callRPCRawMethod({
           chainId: this.chain_id,
           method: "eth_getBlockByHash",
-          params: [block_hash, true],
+          params: [block_hash, false],
           // logger: this.logger,
         })) as BlockWithTransactions;
 
-        let tx_to_sender = new Map();
+        // let tx_to_sender = new Map();
 
-        result.transactions.forEach((tx) => {
-          if (tx_to_sender.get(tx.hash)) {
-            const error = `Duplicate Tx hash in block ${result.number}`;
-            this.logger.warn(error);
-          }
-          tx_to_sender.set(tx.hash, { from: tx.from });
-        });
-
-        // let logs = (await this.pool.run({
-        //   chainId: this.chain_id,
-        //   method: "eth_getLogs",
-        //   params: [
-        //     {
-        //       fromBlock: result.number,
-        //       toBlock: result.number,
-        //     },
-        //   ],
-        //   // logger: this.logger,
-        // }, { name: "callRPCRawMethod"})) as Log[];
+        // result.transactions.forEach((tx) => {
+        //   if (tx_to_sender.get(tx.hash)) {
+        //     const error = `Duplicate Tx hash in block ${result.number}`;
+        //     this.logger.warn(error);
+        //   }
+        //   tx_to_sender.set(tx.hash, { from: tx.from });
+        // });
 
         let logs = (await callRPCRawMethod({
           chainId: this.chain_id,
@@ -293,10 +318,10 @@ export class ETHAdapter {
           logger: this.logger,
         })) as Log[];
 
-        let logs_with_sender = logs.map((log) => ({
-          ...log,
-          sender: tx_to_sender.get(log.transactionHash).from,
-        }));
+        // let logs_with_sender = logs.map((log) => ({
+        //   ...log,
+        //   sender: tx_to_sender.get(log.transactionHash).from,
+        // }));
 
         return {
           hash: result.hash,
@@ -305,7 +330,7 @@ export class ETHAdapter {
           number: result.number,
           timestamp: result.timestamp,
           parentHash: result.parentHash,
-          logs: logs_with_sender,
+          logs,
         };
       };
 

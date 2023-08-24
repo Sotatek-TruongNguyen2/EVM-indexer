@@ -114,10 +114,6 @@ export class IndexForward {
     this._chain_head_emitter = chain_head_emitter;
   }
 
-  // public get pool(): Piscina {
-  //   return this._pool;
-  // }
-
   public get chain_head_emitter(): ChangeStream {
     return this._chain_head_emitter;
   }
@@ -178,9 +174,6 @@ export class IndexForward {
     if (!chainConfig) {
       return;
     }
-
-    // let chainName = chainConfig.name;
-    // let redisClient = await RedisConnection.getClient();
 
     let chain_head_ptr = await this.chain_store.chain_head_ptr();
 
@@ -506,17 +499,6 @@ export class IndexForward {
               }
             }
           }
-          // } catch (err: any) {
-          //   this.logger.warn(err.message);
-          //   this.consecutive_err_count += 1;
-          //   this.previous_triggers_per_block =
-          //     STARTING_PREVIOUS_TRIGGERS_PER_BLOCK;
-          //   await wait(Math.max(120, 5 * this.consecutive_err_count) * 1000);
-
-          //   this.index_state = {
-          //     state: BlockStreamState.RetryAfterDelay,
-          //   };
-          // }
         }
 
         case BlockStreamState.YieldingBlocks: {
@@ -647,23 +629,6 @@ export class IndexForward {
             logger: this.logger,
           });
 
-          // let result = await this.pool.run(
-          //   {
-          //     chainId: this.deployment.chain_id,
-          //     method: "eth_getLogs",
-          //     params: [
-          //       {
-          //         fromBlock: `0x${start.toString(16)}`,
-          //         toBlock: `0x${end.toString(16)}`,
-          //         topics: [[...filter.event_signatures]],
-          //         address: filter.contracts,
-          //       },
-          //     ],
-          //     // logger: this.logger,
-          //   },
-          //   { name: "callRPCRawMethod" },
-          // );
-
           let elapsed = Date.now() - start_calling;
           this.logger.info(
             `Requesting logs for blocks [${start}, ${end}], ${JSON.stringify(
@@ -687,6 +652,23 @@ export class IndexForward {
       }
     }
 
+    // Not all logs have associated transaction hashes, nor do all triggers require them.
+    let transaction_hashes_by_block = new Map<string, Set<string>>();
+
+    for (let log of logs) {
+      let transaction_hashes =
+        transaction_hashes_by_block.get(log.blockHash) || new Set();
+
+      transaction_hashes = transaction_hashes.add(log.transactionHash);
+
+      transaction_hashes_by_block.set(log.blockHash, transaction_hashes);
+    }
+
+    let transaction_receipts_by_hash =
+      await this.adapter.get_transaction_receipts_for_transaction_hashes(
+        transaction_hashes_by_block,
+      );
+
     let block_hashes = new Set(logs.map((log) => log.blockHash));
 
     let to_hash;
@@ -705,49 +687,32 @@ export class IndexForward {
     );
 
     let triggers_by_block = new Map<number, LogWithSender[]>();
-    // blocks.forEach((block) => {
-    //   const log_block_number = Number(block.block_number);
-
-    //   if (!triggers_by_block.get(log_block_number)) {
-    //     triggers_by_block.set(log_block_number, []);
-    //   }
-
-    //   triggers_by_block.set(log_block_number, [
-    //     ...(triggers_by_block.get(log_block_number) as LogWithSender[]),
-    //     ...block.data.logs[],
-    //   ]);
-    // });
-
-    let blocks_with_logs = new Map<number, LogWithSender>();
-
-    blocks.forEach((block) => {
-      if (!blocks_with_logs.get(block.block_number)) {
-        blocks_with_logs.set(block.block_number, block.data.logs);
-      }
-    });
 
     logs.forEach((log) => {
       const log_block_number = Number(log.blockNumber);
-      if (!triggers_by_block.get(log_block_number)) {
-        triggers_by_block.set(log_block_number, []);
-      }
+      let triggers = triggers_by_block.get(log_block_number) || [];
 
-      if (blocks_with_logs.get(log_block_number)) {
-        triggers_by_block.set(log_block_number, [
-          ...(triggers_by_block.get(log_block_number) as LogWithSender[]),
-          blocks_with_logs.get(log_block_number)![Number(log.logIndex)],
-        ]);
-      }
+      triggers = [
+        ...triggers,
+        {
+          ...log,
+          sender:
+            transaction_receipts_by_hash.get(log.transactionHash)?.from ||
+            ethers.constants.AddressZero,
+        },
+      ];
+
+      triggers_by_block.set(log_block_number, triggers);
     });
 
     let blocks_with_triggers = blocks.map((block) => {
       const triggers = triggers_by_block.get(block.block_number);
       if (!triggers) {
-        this.logger.debug(
-          `block ${BigNumber.from(
-            block.block_number,
-          ).toString()} not found in \`triggers_by_block\``,
-        );
+        // this.logger.debug(
+        //   `block ${BigNumber.from(
+        //     block.block_number,
+        //   ).toString()} not found in \`triggers_by_block\``,
+        // );
         return {
           block,
           triggers: [],

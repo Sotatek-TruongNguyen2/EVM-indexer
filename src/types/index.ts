@@ -46,8 +46,8 @@ type CacheBlockPtr = {
 };
 
 type BlockWithLogs = Block & {
-  logs: LogWithSender[];
-  finalized: boolean;
+  logs: Log[];
+  // finalized: boolean;
 };
 
 export {

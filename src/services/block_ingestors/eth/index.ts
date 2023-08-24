@@ -8,6 +8,7 @@ import { ChainStore } from "../../store/chain_head_store";
 import { LogCode } from "../../store/types";
 // import Piscina from "piscina";
 import { callRPCMethod } from "../../../utils/rpcRequest";
+import { EthereumBlockCleaner } from "../../../services/cron-jobs";
 
 export class BlockIngestor {
   private _logger: Logger;
@@ -16,13 +17,12 @@ export class BlockIngestor {
   private _polling_interval: number;
   private _adapter: ETHAdapter;
   private _chain_store: ChainStore;
-  // private _pool: Piscina;
+  private _block_cleaner: EthereumBlockCleaner;
 
   constructor(chain_id: number, chain_store: ChainStore) {
     const indexer_config = IndexerConfig.getInstance();
 
     this._chain_store = chain_store;
-    // this._pool = pool;
     this._adapter = new ETHAdapter(chain_id, this.chain_store);
     this._polling_interval = indexer_config.INGESTOR_POLLING_INTERVAL;
     this._ancestor_count = indexer_config.REORG_THRESHOLD;
@@ -31,11 +31,18 @@ export class BlockIngestor {
     if (chainConfig) {
       this._logger = getIndexerLogger(`${chainConfig.name}_chain_head_ptr`);
     }
+
+    this._block_cleaner = new EthereumBlockCleaner(
+      this._chain_id,
+      this._chain_store,
+      200, // Maximum blocks to delete logs
+      10, // Minimum blocks to delete logs
+    );
   }
 
-  // public get pool(): Piscina {
-  //   return this._pool;
-  // }
+  public get block_cleaner(): EthereumBlockCleaner {
+    return this._block_cleaner;
+  }
 
   public get chain_store(): ChainStore {
     return this._chain_store;
@@ -72,33 +79,12 @@ export class BlockIngestor {
   }
 
   private async do_ingest_block() {
-    // const pool = new Piscina({
-    //   filename: path.resolve(__dirname, "../", "../", `./utils/rpcRequest.ts`),
-    //   // In dev or test, we register ts-node using nodejs arguments
-    //   execArgv: isDevOrTest ? ["-r", "ts-node/register"] : undefined,
-    //   maxThreads: 4,
-    //   minThreads: 2,
-    //   taskQueue: new PiscinaPriorityQueue(),
-    // });
     try {
       let latest_block = await callRPCMethod({
         chainId: this.chain_id,
         callable: "getBlock",
         params: ["latest"],
-        // logger: this.logger,
       });
-
-      // let latest_block = await this.pool.run(
-      //   {
-      //     chainId: this.chain_id,
-      //     callable: "getBlock",
-      //     params: ["latest"],
-      //     // logger: this.logger,
-      //   },
-      //   {
-      //     name: "callRPCMethod",
-      //   },
-      // );
 
       // console.log("latest block:", latest_block);
 
@@ -165,19 +151,7 @@ export class BlockIngestor {
   }
 
   public start() {
+    this.block_cleaner.start();
     this.do_poll();
   }
 }
-
-// export async function build_block_ingestor({
-//   chain_id,
-//   chain_store,
-// }: // pool,
-// {
-//   chain_id: number;
-//   chain_store: ChainStore;
-//   // pool: Piscina;
-// }) {
-//   // const block_ingestor = new BlockIngestor(chain_id, chain_store);
-//   // block_ingestor.start();
-// }

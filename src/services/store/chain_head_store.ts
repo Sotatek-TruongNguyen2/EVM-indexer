@@ -148,7 +148,10 @@ export class ChainStore {
     }
   }
 
-  public async upsert_block(block: BlockWithLogs): Promise<IEthereumBlock> {
+  public async upsert_block(
+    block: BlockWithLogs,
+    finalized?: boolean,
+  ): Promise<IEthereumBlock> {
     try {
       await this.insert_block(block);
       return (await EthereumBlocks.findOneAndUpdate(
@@ -170,7 +173,7 @@ export class ChainStore {
               logs: block.logs,
               timestamp: block.timestamp,
             },
-            finalized: block.finalized || false,
+            finalized: finalized || false,
             timestamp: block.timestamp,
           },
         },
@@ -187,11 +190,13 @@ export class ChainStore {
   public async upsert_light_block(
     block: BlockWithLogs,
   ): Promise<IEthereumBlock> {
-    return await this.upsert_block({
-      ...block,
-      // logs: [],
-      finalized: true,
-    });
+    return await this.upsert_block(
+      {
+        ...block,
+        logs: [],
+      },
+      true, // delete the logs for the light block
+    );
   }
 
   public async chain_head_ptr(): Promise<ChainHeadPtr | undefined> {
