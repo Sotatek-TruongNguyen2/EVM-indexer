@@ -133,8 +133,6 @@ export class EthereumBlockCleaner {
         distance = 0;
       }
 
-      console.log('LOL: ', distance);
-
       await clean_logs_for_block_range(this.chain_id, distance, this.logger);
     });
   }
