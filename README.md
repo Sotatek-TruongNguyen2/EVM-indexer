@@ -1,4 +1,4 @@
-# Redli - a humane alternative to redis-cli
+# Redli - a humane alternative to redis-clis
 
 ## About
 

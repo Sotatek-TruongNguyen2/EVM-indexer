@@ -1,0 +1,21 @@
+# Do not change version. This is the version of aws buildspec, not the version of your buldspec file.
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18.5.0
+  
+  pre_build: 
+    commands: 
+      - echo Installing source NPM dependencies...
+      - npm install
+      - npm install -g pm2
+  build:
+    commands:
+      - echo Build EVM-indexer started on `date`
+      - echo Compiling the EVM-indexer code
+      - npm run build
+  post_build:
+    commands:
+      - echo Build EVM-indexer completed on `date`
+      - pm2 restart 0 
