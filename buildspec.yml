@@ -9,7 +9,6 @@ phases:
     commands: 
       - echo Installing source NPM dependencies...
       - npm install
-      - npm install -g pm2
   build:
     commands:
       - echo Build EVM-indexer started on `date`
@@ -18,4 +17,6 @@ phases:
   post_build:
     commands:
       - echo Build EVM-indexer completed on `date`
-      - pm2 restart 0 
+artifacts:
+  files:
+    - dist
