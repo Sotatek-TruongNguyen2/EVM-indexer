@@ -80,8 +80,8 @@ const ChainConfig: ChainsConfig = {
     deployments: [
       {
         contract: "0x85a33726E27bBd6b4560620B12Ce109B7909eA41",
-        start_block: 30950837, // Block to backindex until
-        oldest_block: 30950837, // Start indexing old
+        start_block: 31119988, // Block to backindex until
+        oldest_block: 31119988, // Start indexing old
         // start_block: 32492278, // Block to backindex until
         // oldest_block: 32492278, // Start indexing older txns from here until startblock
         // tokens: buildTokenInfo(ChainId.ETH),
