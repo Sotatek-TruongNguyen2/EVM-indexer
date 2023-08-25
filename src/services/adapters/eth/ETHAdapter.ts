@@ -248,16 +248,6 @@ export class ETHAdapter {
       );
 
       const get_block_hash = (block_hash: string) => async () => {
-        // let result = await this.pool.run(
-        //   {
-        //     chainId: this.chain_id,
-        //     method: "eth_getBlockByHash",
-        //     params: [block_hash, true],
-        //     // logger: this.logger,
-        //   },
-        //   { name: "callRPCRawMethod" },
-        // );
-
         let result = await callRPCRawMethod({
           chainId: this.chain_id,
           method: "eth_getBlockByHash",
@@ -294,17 +284,13 @@ export class ETHAdapter {
           method: "eth_getBlockByHash",
           params: [block_hash, false],
           // logger: this.logger,
-        })) as BlockWithTransactions;
+        })) as Block;
 
-        // let tx_to_sender = new Map();
-
-        // result.transactions.forEach((tx) => {
-        //   if (tx_to_sender.get(tx.hash)) {
-        //     const error = `Duplicate Tx hash in block ${result.number}`;
-        //     this.logger.warn(error);
-        //   }
-        //   tx_to_sender.set(tx.hash, { from: tx.from });
-        // });
+        if (!result || !result.number) {
+          throw new Error(
+            `Ethereum data for block hash ${block_hash} not found. Result: ${result}`,
+          );
+        }
 
         let logs = (await callRPCRawMethod({
           chainId: this.chain_id,
@@ -317,11 +303,6 @@ export class ETHAdapter {
           ],
           logger: this.logger,
         })) as Log[];
-
-        // let logs_with_sender = logs.map((log) => ({
-        //   ...log,
-        //   sender: tx_to_sender.get(log.transactionHash).from,
-        // }));
 
         return {
           hash: result.hash,
@@ -338,7 +319,7 @@ export class ETHAdapter {
       return result;
     } catch (err: any) {
       this.logger.warn(
-        `Ethereum node took too long to return data for block #${block_hash}`,
+        `Ethereum node took too long to return block data with its logs for block #${block_hash}`,
       );
       throw err;
     }
