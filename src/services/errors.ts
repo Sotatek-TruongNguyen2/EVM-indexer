@@ -9,6 +9,7 @@ const TOO_MANY_LOGS_FINGERPRINTS = [
   "Request failed with status code 503",
   "aborted",
   `could not detect network (event="noNetwork"`,
+  "503",
 ];
 
 export { TOO_MANY_LOGS_FINGERPRINTS };
