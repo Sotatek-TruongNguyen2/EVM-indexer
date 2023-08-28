@@ -3,6 +3,7 @@ import { UserLevel } from "../constants";
 import { IUserDataTrie, UserDataTrie } from "../models/trie";
 import { EnvironmentConfig } from "../../../config/env";
 import { trim_0x_in_address } from "../../../utils/address";
+import { USER_LEVEL_UP_REQUIREMENTS, UserLevelScore } from "../constants/user";
 
 export const upsert_new_node = (
   str: string,
@@ -146,35 +147,71 @@ export const get_user_current_level = async (
         .toString();
     }
 
-    if (branch_types[UserLevel.BLACK_DIAMOND] >= 3) {
-      return UserLevel.CROWN_DIAMOND;
+    let f1_levels = [
+      ...Array(branch_types[UserLevel.BLACK_DIAMOND] || 0).fill(
+        UserLevel.BLACK_DIAMOND,
+      ),
+      ...Array(branch_types[UserLevel.BLUE_DIAMOND] || 0).fill(
+        UserLevel.BLUE_DIAMOND,
+      ),
+      ...Array(branch_types[UserLevel.DIAMOND] || 0).fill(UserLevel.DIAMOND),
+      ...Array(branch_types[UserLevel.EMERALD] || 0).fill(UserLevel.EMERALD),
+      ...Array(branch_types[UserLevel.RUBY] || 0).fill(UserLevel.RUBY),
+      ...Array(branch_types[UserLevel.SAPPHIRE] || 0).fill(UserLevel.SAPPHIRE),
+    ];
+
+    let user_level_requirement_keys = Object.keys(
+      USER_LEVEL_UP_REQUIREMENTS,
+    ) as UserLevel[];
+
+    for (let i = 0; i < user_level_requirement_keys.length; i++) {
+      let satisfied = satisfy_level_requirements(
+        f1_levels,
+        USER_LEVEL_UP_REQUIREMENTS[user_level_requirement_keys[i]],
+      );
+
+      if (satisfied) {
+        return user_level_requirement_keys[i];
+      }
     }
 
-    if (branch_types[UserLevel.BLUE_DIAMOND] >= 3) {
-      return UserLevel.BLACK_DIAMOND;
-    }
+    // let black_diamond_satisfied = satisfy_level_requirements(f1_levels, [
+    //   UserLevel.BLACK_DIAMOND,
+    //   UserLevel.BLACK_DIAMOND,
+    //   UserLevel.BLACK_DIAMOND,
+    // ]);
 
-    if (branch_types[UserLevel.DIAMOND] >= 3) {
-      return UserLevel.BLUE_DIAMOND;
-    }
+    // if (black_diamond_satisfied)
+    //   if (branch_types[UserLevel.BLUE_DIAMOND] >= 3) {
+    //     // if (branch_types[UserLevel.BLACK_DIAMOND] >= 3) {
+    //     //   return;
+    //     //   return UserLevel.CROWN_DIAMOND;
+    //     // }
 
-    if (
-      branch_types[UserLevel.EMERALD] >= 2 &&
-      branch_types[UserLevel.RUBY] >= 1
-    ) {
-      return UserLevel.DIAMOND;
-    }
+    //     return UserLevel.BLACK_DIAMOND;
+    //   }
 
-    if (
-      branch_types[UserLevel.RUBY] >= 2 &&
-      branch_types[UserLevel.SAPPHIRE] >= 1
-    ) {
-      return UserLevel.EMERALD;
-    }
+    // if (branch_types[UserLevel.DIAMOND] >= 3) {
+    //   return UserLevel.BLUE_DIAMOND;
+    // }
 
-    if (branch_types[UserLevel.SAPPHIRE] >= 2) {
-      return UserLevel.RUBY;
-    }
+    // if (
+    //   branch_types[UserLevel.EMERALD] >= 2 &&
+    //   branch_types[UserLevel.RUBY] >= 1
+    // ) {
+    //   return UserLevel.DIAMOND;
+    // }
+
+    // if (
+    //   branch_types[UserLevel.RUBY] >= 2 &&
+    //   branch_types[UserLevel.SAPPHIRE] >= 1
+    // ) {
+    //   return UserLevel.EMERALD;
+    // }
+
+    // if (branch_types[UserLevel.SAPPHIRE] >= 2) {
+    //   return UserLevel.RUBY;
+    // }
 
     if (
       new BigNumber(total_branches_staking).gte(
@@ -187,3 +224,32 @@ export const get_user_current_level = async (
 
   return UserLevel.UNKNOWN;
 };
+
+// @dev: f1_levels and requirements should be sorted from highest to lowest before passing
+// to this function
+// @dev: Only apply to rank that greater than `SAPPHIRE`
+function satisfy_level_requirements(
+  f1_levels: UserLevel[],
+  requirements: UserLevel[],
+): boolean {
+  // Just in case f1_levels is not enough to cover the level requirements -> false
+  if (f1_levels.length < requirements.length) {
+    return false;
+  }
+
+  for (let i = 0; i < f1_levels.length; i++) {
+    if (i >= requirements.length) {
+      break;
+    }
+
+    let f1_level_satisfied =
+      UserLevelScore[f1_levels[i]] / UserLevelScore[requirements[i]];
+
+    // If one level isn't satisfied -> Return false right away
+    if (f1_level_satisfied < 1) {
+      return false;
+    }
+  }
+
+  return true;
+}
