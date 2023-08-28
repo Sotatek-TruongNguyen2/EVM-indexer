@@ -9,6 +9,38 @@ enum UserLevel {
   CROWN_DIAMOND = "CROWN_DIAMOND",
 }
 
+enum UserLevelScore {
+  UNKNOWN = 1,
+  SAPPHIRE = 2,
+  RUBY = 3,
+  EMERALD = 4,
+  DIAMOND = 5,
+  BLUE_DIAMOND = 6,
+  BLACK_DIAMOND = 7,
+  CROWN_DIAMOND = 8,
+}
+
+const USER_LEVEL_UP_REQUIREMENTS = {
+  [UserLevel.CROWN_DIAMOND]: [
+    UserLevel.BLACK_DIAMOND,
+    UserLevel.BLACK_DIAMOND,
+    UserLevel.BLACK_DIAMOND,
+  ],
+  [UserLevel.BLACK_DIAMOND]: [
+    UserLevel.BLUE_DIAMOND,
+    UserLevel.BLUE_DIAMOND,
+    UserLevel.BLUE_DIAMOND,
+  ],
+  [UserLevel.BLUE_DIAMOND]: [
+    UserLevel.DIAMOND,
+    UserLevel.DIAMOND,
+    UserLevel.DIAMOND,
+  ],
+  [UserLevel.DIAMOND]: [UserLevel.EMERALD, UserLevel.EMERALD, UserLevel.RUBY],
+  [UserLevel.EMERALD]: [UserLevel.RUBY, UserLevel.RUBY, UserLevel.SAPPHIRE],
+  [UserLevel.RUBY]: [UserLevel.SAPPHIRE, UserLevel.SAPPHIRE],
+};
+
 const UserLevelGlobalInterest = {
   UNKNOWN: 0,
   SAPPHIRE: 100,
@@ -35,9 +67,11 @@ const USER_LEVEL_PASSED_INTEREST = 100;
 
 export {
   UserLevel,
+  UserLevelScore,
   UserStakingInterest,
   UserLevelGlobalInterest,
   ACCUMULATIVE_PRECISION,
   BASIS_POINT,
   USER_LEVEL_PASSED_INTEREST,
+  USER_LEVEL_UP_REQUIREMENTS,
 };
